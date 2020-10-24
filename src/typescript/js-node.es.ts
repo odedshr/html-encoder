@@ -205,14 +205,14 @@ export default class JSNode {
   }
   // shakeable _getHTMLNode end
 
-  // feature fixHTMLTags
+  // shakeable fixHTMLTags
   private fixHTMLTags(xmlString: string) {
     return xmlString.replace(
       /\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm,
       '<$1$2></$1>'
     );
   }
-  // feature fixHTMLTags end
+  // shakeable fixHTMLTags end
 }
 
 // functions goes here

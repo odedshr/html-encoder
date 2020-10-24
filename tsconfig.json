@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./out/@types",
     "module": "CommonJS",
     "target": "es6",
     "outDir": "./out",
