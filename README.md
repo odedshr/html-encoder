@@ -1,17 +1,23 @@
 # HTML Encoder extension for VS-code
 
-[![Build Status](https://travis-ci.org/odedshr/html-encoder.svg?branch=master)](https://travis-ci.org/odedshr/html-encoder)
+[![Build Status](https://travis-ci.org/odedshr/html-encoder-core.svg?branch=master)](https://travis-ci.org/odedshr/html-encoder-core)
 
-[![Dependency Status](https://david-dm.org/odedshr/html-encoder.svg?theme=shields.io)](https://david-dm.org/odedshr/html-encoder)
+[![Dependency Status](https://david-dm.org/odedshr/html-encoder-core.svg?theme=shields.io)](https://david-dm.org/odedshr/html-encoder-core)
 
-[![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://github.com/odedshr/html-encoder/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://github.com/odedshr/html-encoder-core/blob/master/LICENSE)
 
 ## The Main Gist
 
-HTML-Encoder converts your template HTML file to a JavaScript/TypeScript function (henceforth JSNode) as soon as you save it.
-The file can then be embedded in either server-side or client-side code. It's pretty much like [JSX](https://reactjs.org/docs/introducing-jsx.html) or [Svelete](https://svelte.dev/) but without any special render command and it allowing you to write vanilla/Typescript code.
+HTML-Encoder converts your template HTML file to JSON instructions that be piped to a JavaScript/TypeScript function (henceforth JSNode).
+The file can then be embedded in either server-side or client-side code. It's pretty much like [JSX](https://reactjs.org/docs/introducing-jsx.html) or [Svelete](https://svelte.dev/).
 
 See a live example at the [showcase](https://odedshr.github.io/html-encoder-showcase/).
+
+### Installing
+
+```bash
+  npm install @html-encoder/core
+```
 
 ### Getting it to work
 
@@ -35,9 +41,7 @@ Target path can be relative to the source's path or absolute
 
 ## Dynamic Content Support
 
-`HTML-encoder` supports dynamic content using [`XML-processing-instructions`](https://en.wikipedia.org/wiki/Processing_Instruction)
-
-and passing an object of data to the constructor (e.g. `getNode({divClass: 'highlighted', src: './portfolio.png' })`).
+`HTML-encoder` supports dynamic content using [`XML-processing-instructions`](https://en.wikipedia.org/wiki/Processing_Instruction) and passing an object of data to the constructor (e.g. `getNode({divClass: 'highlighted', src: './portfolio.png' })`).
 
 These instructions are applied to their preceding sibling tag or parent if no preceding tag available. For example for the data
 
@@ -144,6 +148,21 @@ Output:
   <li>b</li>
   <li>c</li>
 </ul>
+```
+
+- `<?:'./import-file.svg'?>` - embeds a file as part of the template. The file can be free-text or xml-based (HTML, XML, SVG) that will then be parsed automatically. Note that unlike other process-instruction, this PI is being handled at compile-time. For example:
+
+```html
+<div class="image"><?:"./images/svg_logo.svg"?></div>
+```
+
+Output:
+
+```xml
+<div class="image"><svg width="100" height="100">
+   <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle>
+   Sorry, your browser does not support inline SVG.
+</svg></div>
 ```
 
 ## Easy-access to Content

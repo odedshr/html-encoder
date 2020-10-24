@@ -19,6 +19,6 @@
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
   "files": [
-    "src/JSNode.es.ts"
+    "src/typescript/js-node.es.ts"
   ]
 }

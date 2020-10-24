@@ -2,9 +2,8 @@
   "name": "html-encoder",
   "displayName": "HTML Encoder",
   "description": "Encode your HTML templates to Javascript or TypeScript instructions",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "scripts": {
-    "vscode:prepublish": "npm run build",
     "build": "npm run copy & tsc & npm run build:es",
     "build:watch": "npm run copy:watch & npm run build:es:watch & tsc -w",
     "copy": "node ./node_modules/assetomat/index.js once",
@@ -12,63 +11,30 @@
     "build:es": "tsc -p ./tsconfig.es.json",
     "build:es:watch": "tsc -w -p ./tsconfig.es.json",
     "pretest": "npm run build",
-    "test": "mocha src/test/*.test.js",
-    "test:extension": "node ./out/test/runTest.js",
-    "vscode:package": "vsce package",
-    "vscode:publish": "vsce publish"
+    "test": "mocha src/test/**/*.test.js",
+    "test:coverage": "nyc mocha src/test/**/*.test.js"
   },
-  "categories": [
-    "Programming Languages",
-    "Other"
-  ],
   "icon": "images/icon.png",
-  "galleryBanner": {
-    "color": "#4e6885",
-    "theme": "dark"
-  },
+  "main": "out/html-encoder.js",
+  "keywords": [
+    "html",
+    "js",
+    "ts"
+  ],
   "publisher": "odedshr",
   "author": {
     "name": "odedshr@gmail.com"
   },
-  "homepage": "https://github.com/odedshr/html-encoder/blob/vscode-extension/README.md",
-  "license": "https://github.com/odedshr/html-encoder/blob/master/LICENSE",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/odedshr/html-encoder.git"
-  },
-  "bugs": {
-    "url": "https://github.com/odedshr/html-encoder/issues",
-    "name": "odedshr@gmail.com"
-  },
+  "license": "ISC",
   "assets": [
     {
-      "source": "src/JSNode.ts",
+      "source": "src/typescript/js-node.ts",
       "target": [
-        "out/JSNode.template-ts",
-        "src/JSNode.es.ts"
+        "out/typescript/js-node.template-ts",
+        "src/typescript/js-node.es.ts"
       ]
     }
   ],
-  "engines": {
-    "vscode": "^1.46.0"
-  },
-  "activationEvents": [
-    "onLanguage:html-encoder"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "languages": [
-      {
-        "id": "html-encoder",
-        "aliases": [
-          "HTML-Encoder"
-        ],
-        "extensions": [
-          "template.html"
-        ]
-      }
-    ]
-  },
   "dependencies": {
     "@types/xmldom": "^0.1.30",
     "chokidar": "^3.4.2",
@@ -85,10 +51,9 @@
     "eslint": "^7.6.0",
     "glob": "^7.1.6",
     "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
     "require-from-string": "^2.0.2",
     "typescript": "^3.9.6",
-    "uglify-js": "^3.9.4",
-    "vscode": "^1.1.37",
-    "vscode-test": "^1.3.0"
+    "uglify-js": "^3.9.4"
   }
 }

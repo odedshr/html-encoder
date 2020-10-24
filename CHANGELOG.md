@@ -70,3 +70,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known Issues
 
 1. ServerSide text condition cannot be removed (as I didn't have where to mark the data-live-if-child)
+
+## [2.0.0] - 2020-10-24
+
+### Removed
+
+- CLI support + vscode extension support (move to separate projects).
+
+### Added
+
+- import-file support

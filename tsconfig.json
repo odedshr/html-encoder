@@ -18,10 +18,14 @@
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
+  "files": [
+    "src/html-encoder.ts",
+    "src/typescript/js-node.ts"
+  ],
   "exclude": [
     "node_modules",
     ".vscode-test",
     "out",
-    "src/JSNode.es.ts"
+    "src/js-node.es.ts"
   ]
 }
