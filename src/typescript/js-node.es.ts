@@ -274,7 +274,6 @@ function isInstructionWithChildren(comment: string) {
   return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
 }
 
-// feature browser-reactivity
 function safeRemove(parent: Node, child?: Node) {
   if (child) {
     parent.removeChild(child);
@@ -354,6 +353,7 @@ function processServerRenderedProcessInstruction(self: JSNode, parent: Node, chi
   }
 }
 
+// if all keys are consecutive integers from 0 and forward, then return an array
 function getArrayIfPossible(items: { [key: string]: any }) {
   const arr: any[] = [];
   const keys = Object.keys(items);
@@ -367,7 +367,6 @@ function getArrayIfPossible(items: { [key: string]: any }) {
 
   return arr;
 }
-// feature browser-reactivity end
 
 // feature reactivity
 function addReactiveFunctionality(node: ChildNode, set: { [key: string]: Property[] } = {}, domParser: DOMParser) {

@@ -225,7 +225,6 @@ function initChild(self, node) {
 function isInstructionWithChildren(comment) {
     return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
 }
-// feature browser-reactivity
 function safeRemove(parent, child) {
     if (child) {
         parent.removeChild(child);
@@ -297,6 +296,7 @@ function processServerRenderedProcessInstruction(self, parent, children) {
             console.error('Unidentified PI:', firstValue);
     }
 }
+// if all keys are consecutive integers from 0 and forward, then return an array
 function getArrayIfPossible(items) {
     const arr = [];
     const keys = Object.keys(items);
@@ -309,7 +309,6 @@ function getArrayIfPossible(items) {
     }
     return arr;
 }
-// feature browser-reactivity end
 // feature reactivity
 function addReactiveFunctionality(node, set = {}, domParser) {
     Object.defineProperty(node, 'set', {
