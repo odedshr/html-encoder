@@ -80,3 +80,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - import-file support
+
+## [2.0.3] - 2020-10-24
+
+- 🐛 Fixed server-side PI not working when file not reactive
+- 🎨 moved output folder to dist
+- 🚑 fixed travis ci node version to support imports
+- 🚑 moved d.ts file to main out folder
