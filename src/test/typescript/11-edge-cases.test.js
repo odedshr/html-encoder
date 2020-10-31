@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { test, getNode, getTSString, getNodeFactory } = require('./utils.js');
-const htmlEncoder = require('../../../out/html-encoder').default;
+const htmlEncoder = require('../../../dist/html-encoder').default;
 
 describe('html-encoder-typescript: edge-cases', () => {
 	it('handles empty file', () => test('', {}, ''));

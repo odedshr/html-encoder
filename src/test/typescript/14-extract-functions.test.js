@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { extractFunctions } = require('../../../out/typescript/extract-functions');
+const { extractFunctions } = require('../../../dist/typescript/extract-functions');
 
 describe('html-encoder-typescript: extract-functions', () => {
   it('handle empty if', () =>

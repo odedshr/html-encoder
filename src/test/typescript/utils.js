@@ -1,7 +1,7 @@
 const assert = require('assert');
 const requireFromString = require('require-from-string');
 const { writeFileSync } = require('fs');
-const htmlEncoder = require('../../../out/html-encoder').default;
+const htmlEncoder = require('../../../dist/html-encoder').default;
 
 function getOutputString(encodedNode, data) {
   const getNode = requireFromString(encodedNode).getNode;

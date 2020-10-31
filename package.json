@@ -15,7 +15,7 @@
     "test:coverage": "nyc mocha src/test/**/*.test.js"
   },
   "icon": "images/icon.png",
-  "main": "out/html-encoder.js",
+  "main": "dist/html-encoder.js",
   "keywords": [
     "html",
     "js",
@@ -30,7 +30,7 @@
     {
       "source": "src/typescript/js-node.ts",
       "target": [
-        "out/typescript/js-node.template-ts",
+        "dist/typescript/js-node.template-ts",
         "src/typescript/js-node.es.ts"
       ]
     }

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { appendNode, getDocument } = require('../../../out/typescript/transpile.nodes');
+const { appendNode, getDocument } = require('../../../dist/typescript/transpile.nodes');
 
 describe('html-encoder-typescript: transpile.process-instruction', () => {
   it('handles unknown type node instruction', () => assert.strictEqual(appendNode({

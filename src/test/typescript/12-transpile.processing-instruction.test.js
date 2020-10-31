@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { getProcessingInstruction } = require('../../../out/typescript/transpile.processing-instruction');
+const { getProcessingInstruction } = require('../../../dist/typescript/transpile.processing-instruction');
 
 describe('html-encoder-typescript: transpile.process-instruction', () => {
   it('handles unknown instruction', () => assert.strictEqual(getProcessingInstruction({

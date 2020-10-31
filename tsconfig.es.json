@@ -3,7 +3,7 @@
     "declaration": true,
     "module": "ESNext",
     "target": "es6",
-    "outDir": "./out",
+    "outDir": "./dist",
     "lib": [
       "es6",
       "dom"

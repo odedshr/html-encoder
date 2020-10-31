@@ -63,6 +63,6 @@ typings/
 .TODO
 
 .tmp
-out
+dist
 .vscode-test/
 *.vsix

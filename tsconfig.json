@@ -3,7 +3,7 @@
     "declaration": true,
     "module": "CommonJS",
     "target": "es6",
-    "outDir": "./out",
+    "outDir": "./dist",
     "lib": [
       "es6",
       "dom"
@@ -24,7 +24,7 @@
   "exclude": [
     "node_modules",
     ".vscode-test",
-    "out",
+    "dist",
     "src/js-node.es.ts"
   ]
 }

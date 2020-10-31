@@ -1,6 +1,6 @@
 const assert = require('assert');
-const htmlEncoder = require('../../../out/html-encoder').default;
-const { writeFileSync } = require('fs');
+const htmlEncoder = require('../../../dist/html-encoder').default;
+// const { writeFileSync } = require('fs');
 
 
 function testJSON(originalString, expectedJSON, /*testFileName = undefined*/) {
