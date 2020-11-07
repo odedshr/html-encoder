@@ -87,3 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🎨 moved output folder to dist
 - 🚑 fixed travis ci node version to support imports
 - 🚑 moved d.ts file to main out folder
+
+## [2.0.4] - 2020-11-07
+
+- 🚚 Moved typescript code chunk to its own folder
+- Removed the js-node.map comment from the js template
