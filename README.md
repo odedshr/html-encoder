@@ -1,14 +1,14 @@
-# HTML Encoder extension for VS-code
+# HTML Encoder
 
-[![Build Status](https://travis-ci.org/odedshr/html-encoder-core.svg?branch=master)](https://travis-ci.org/odedshr/html-encoder-core)
+[![Build Status](https://travis-ci.org/odedshr/html-encoder.svg?branch=master)](https://travis-ci.org/odedshr/html-encoder-core)
 
-[![Dependency Status](https://david-dm.org/odedshr/html-encoder-core.svg?theme=shields.io)](https://david-dm.org/odedshr/html-encoder-core)
+[![Dependency Status](https://david-dm.org/odedshr/html-encoder.svg?theme=shields.io)](https://david-dm.org/odedshr/html-encoder-core)
 
-[![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://github.com/odedshr/html-encoder-core/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://github.com/odedshr/html-encoder/blob/master/LICENSE)
 
 ## The Main Gist
 
-HTML-Encoder converts your template HTML file to JSON instructions that be piped to a JavaScript/TypeScript function (henceforth JSNode).
+HTML-Encoder converts your template HTML file to JSON instructions that can be piped to a JavaScript/TypeScript function (henceforth JSNode).
 The file can then be embedded in either server-side or client-side code. It's pretty much like [JSX](https://reactjs.org/docs/introducing-jsx.html) or [Svelete](https://svelte.dev/).
 
 See a live example at the [showcase](https://odedshr.github.io/html-encoder-showcase/).
@@ -16,28 +16,39 @@ See a live example at the [showcase](https://odedshr.github.io/html-encoder-show
 ### Installing
 
 ```bash
-  npm install @html-encoder/core
+  npm install html-encoder
 ```
 
-### Getting it to work
+### Usage
 
-After enabling the extension, simply save a `[filename].template.html` file and the `filename.template.js` will pop up in the same folder.
-You can then easily embed by importing it to your code and appending the node to the DOM tree:
+```typescript
+  import htmlEncoder, { TargetType } from 'html-encoder';
+
+  const xmlString:string = '<html>...</html>';
+  const targetType:TargetType = 'js';
+  const isServerSide:boolean = false;
+  const codeFile:string = htmlEncoder(xmlString, targetType, isServerSide);
+
+/**
+* Generates a string of instructions how to recreate the provided XML
+* @param string xmlString - can be simple text string, but it if it's XML (HTML or SVG, for example) it'll be parsed accordingly
+* @param TargetType targetType - supported output type. Current available statuses are json, js (javascript), es ("js" file but in ES6 format) and ts (typescript)
+* @param boolean isServerSide - a flag indicating whether code should include additional comments that will help the file become dynamic once sent to the browser
+* @return string - instructions to recreate the HTML.
+*/
+```
+
+Standard JS output is [commonJS](https://medium.com/@cgcrutch18/commonjs-what-why-and-how-64ed9f31aa46#:~:text=CommonJS%20is%20a%20module%20formatting,heavily%20influenced%20NodeJS's%20module%20management.)-compliant; Should you wish to have a [ESNext](https://www.javascripttutorial.net/es-next/), you can use the type `es`.
+
+### How to use the output
+
+Once the returned string is saved, you can then easily embed by importing it to your code and appending the node to the DOM tree:
 
 ```javascript
 import { getNode } from 'login-screen.template.js';
 
 document.appendChild(getNode());
 ```
-
-### Different outputs
-
-Should you wish to save to a different destination, simply add the tag `<?out /path-to-new-target.ts ?>`.
-Target path can be relative to the source's path or absolute
-
-- If the target extension is `ts` the output file will have Typescript notation.
-- The standard output is [commonJS](https://medium.com/@cgcrutch18/commonjs-what-why-and-how-64ed9f31aa46#:~:text=CommonJS%20is%20a%20module%20formatting,heavily%20influenced%20NodeJS's%20module%20management.)-compliant; Should you wish to have a [ESNext](https://www.javascripttutorial.net/es-next/) compliant change your target suffix to `es` (e.g. `<?out *.es?>`).
-- An optional parameter `ssr` will be explained later, but the format looks likes this `<?out:ssr target.ts ?>`
 
 ## Dynamic Content Support
 
