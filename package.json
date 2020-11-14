@@ -21,6 +21,10 @@
     "js",
     "ts"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odedshr/html-encoder.git"
+  },
   "publisher": "odedshr",
   "author": {
     "name": "odedshr@gmail.com"
