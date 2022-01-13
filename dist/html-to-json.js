@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const xmldom_1 = require("xmldom");
+const xmldom_1 = require("@xmldom/xmldom");
 const fs_1 = require("fs");
 const instruction_1 = require("./instruction");
 const domParser = new xmldom_1.DOMParser();
@@ -106,7 +106,7 @@ class NodeParser {
             instruction.tag = 'template';
             const isImportedFile = /^(["'])(.*)\1$/.exec(tag.substr(1));
             if (isImportedFile) {
-                instruction.children = [(new NodeParser(fs_1.readFileSync(isImportedFile[2], encoding), this.isTypescript)).getJSON()];
+                instruction.children = [(new NodeParser((0, fs_1.readFileSync)(isImportedFile[2], encoding), this.isTypescript)).getJSON()];
             }
             else {
                 instruction.value = tag.substr(1);

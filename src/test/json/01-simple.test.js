@@ -1,5 +1,5 @@
 const assert = require('assert');
-const DOMParser = require('xmldom').DOMParser;
+const DOMParser = require('@xmldom/xmldom').DOMParser;
 const domParser = new DOMParser();
 const { testJSON } = require('./utils.js');
 
@@ -69,42 +69,7 @@ describe('html-encoder-json: basic operations', () => {
 	it('converts a full static html', () =>
 		testJSON(
 			'<!DOCTYPE html><html><body>Hello <b>World</b></body></html>',
-			{
-				"type": "document",
-				"attributes": {
-					"name": "html",
-					"publicId": false,
-					"systemId": false
-				},
-				"children": [
-					{
-						"type": "element",
-						"tag": "html",
-						"children": [
-							{
-								"type": "element",
-								"tag": "body",
-								"children": [
-									{
-										"type": "text",
-										"value": "Hello "
-									},
-									{
-										"type": "element",
-										"tag": "b",
-										"children": [
-											{
-												"type": "text",
-												"value": "World"
-											}
-										]
-									}
-								]
-							}
-						]
-					}
-				]
-			}
+			{ "type": "document", "attributes": { "name": "html", "publicId": "", "systemId": "" }, "children": [{ "type": "element", "tag": "html", "children": [{ "type": "element", "tag": "body", "children": [{ "type": "text", "value": "Hello " }, { "type": "element", "tag": "b", "children": [{ "type": "text", "value": "World" }] }] }] }] }
 		));
 
 	// The encoder uses ProcessInstructions (PI) to properly parse dynamic files. However if it sees an unknown PI,

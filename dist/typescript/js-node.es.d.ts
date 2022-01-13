@@ -20,7 +20,7 @@ interface NodeWithSet extends Node {
         [key: string]: Property[];
     };
 }
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 export declare function getNode(data?: {
     [key: string]: any;
 }): NodeWithSet;

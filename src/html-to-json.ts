@@ -1,4 +1,4 @@
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 
 import { readFileSync } from 'fs';
 import { Instruction, Attribute, LoopInstruction, endSubRoutineTag } from './instruction';

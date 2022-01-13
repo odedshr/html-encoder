@@ -1,5 +1,5 @@
 const assert = require('assert');
-const DOMParser = require('xmldom').DOMParser;
+const DOMParser = require('@xmldom/xmldom').DOMParser;
 const domParser = new DOMParser();
 const { test } = require('./utils.js');
 

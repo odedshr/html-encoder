@@ -4,7 +4,7 @@ const NodeType = {
     Document: 9,
 };
 // feature server-reactivity
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
 // feature server-reactivity end
 export function getNode(data = {}) {

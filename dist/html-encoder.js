@@ -14,7 +14,7 @@ function htmlEncoder(html, type = 'js', isSSR = false) {
     if (type === 'json') {
         return parser.toString();
     }
-    return index_1.transpile(parser.getJSON(), type, isSSR);
+    return (0, index_1.transpile)(parser.getJSON(), type, isSSR);
 }
 exports.default = htmlEncoder;
 //# sourceMappingURL=html-encoder.js.map

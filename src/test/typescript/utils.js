@@ -42,7 +42,7 @@ function test(originalString, data = {}, expectedString, description, testFileNa
 
 function addTestFixture(encodedNode) {
   return `
-  const xmldom_1 = require("xmldom");
+  const xmldom_1 = require("@xmldom/xmldom");
   const window = { DOMParser: xmldom_1.DOMParser };
   ${encodedNode}
   `;
@@ -80,7 +80,7 @@ function getSsrHtml(htmlString, data, testFileName = undefined) {
 function getSSRNode(htmlString, data, testFileName = undefined) {
   const ssrEncodedNode = getSsrHtml(htmlString, data, testFileName);
   const browserEncoded = `
-  const xmldom_1 = require("xmldom");
+  const xmldom_1 = require("@xmldom/xmldom");
   const window = { DOMParser: xmldom_1.DOMParser };
   ${htmlEncoder(htmlString, 'js', false)}
   `;

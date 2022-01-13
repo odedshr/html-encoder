@@ -35,14 +35,14 @@ function getSSRTextOrHTMLProcessingInstruction(instruction) {
         return '';
     }
     const content = [instruction.tag, instruction.id].join(' ');
-    return `node.appendChild(${transpile_nodes_1.getComment({ type: 'ProcessingInstruction', tag: 'comment', value: `PI:${content}` })});`;
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({ type: 'ProcessingInstruction', tag: 'comment', value: `PI:${content}` })});`;
 }
 function getSSRCssProcessingInstruction(instruction) {
     const value = (Array.isArray(instruction.value) ? instruction.value : [instruction.value])
         .filter(isAttributeWithId)
         //@ts-ignore (filter should have kicked out all irrelevant types)
         .map(item => `${(item === null || item === void 0 ? void 0 : item.id) || ''}:${item === null || item === void 0 ? void 0 : item.variable}`);
-    return `node.appendChild(${transpile_nodes_1.getComment({
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({
         type: 'ProcessingInstruction',
         tag: 'comment',
         value: `PI:css ${value.join(' ')}`
@@ -66,11 +66,12 @@ function getSSRAttributeProcessingInstruction(instruction) {
                 variable: attribute === null || attribute === void 0 ? void 0 : attribute.variable
             };
         })
-            .map(attribute => ((attribute === null || attribute === void 0 ? void 0 : attribute.variable) ? `${attribute.id}:${attribute.variable}` // normal attribute
+            .map(attribute => ((attribute === null || attribute === void 0 ? void 0 : attribute.variable)
+            ? `${attribute.id}:${attribute.variable}` // normal attribute
             : `${attribute.id}` // attributeMap
         ))
     ].filter(s => (s && s.length)).join(' ');
-    return `node.appendChild(${transpile_nodes_1.getComment({ type: 'ProcessingInstruction', tag: 'comment', value: `PI:${attr}` })});`;
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({ type: 'ProcessingInstruction', tag: 'comment', value: `PI:${attr}` })});`;
 }
 function getSSRForEachProcessingInstruction(instruction, isEnd) {
     if (!instruction.id) {
@@ -79,7 +80,7 @@ function getSSRForEachProcessingInstruction(instruction, isEnd) {
     const prefix = isEnd ? '/PI' : 'PI';
     const { variable, functionName } = instruction.attributes || {};
     const loopDetails = [instruction.id, variable, functionName].join(' ');
-    return `node.appendChild(${transpile_nodes_1.getComment({ type: 'ProcessingInstruction', tag: 'comment', value: `${prefix}:foreach ${loopDetails}` })});`;
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({ type: 'ProcessingInstruction', tag: 'comment', value: `${prefix}:foreach ${loopDetails}` })});`;
 }
 function getSSRIfProcessingInstruction(instruction, isEnd) {
     if (!instruction.id) {
@@ -88,7 +89,7 @@ function getSSRIfProcessingInstruction(instruction, isEnd) {
     const prefix = isEnd ? '/PI' : 'PI';
     const { functionName } = instruction.attributes || {};
     const ifDetails = [instruction.id, functionName].join(' ');
-    return `node.appendChild(${transpile_nodes_1.getComment({ type: 'ProcessingInstruction', tag: 'comment', value: `${prefix}:if ${ifDetails}` })});`;
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({ type: 'ProcessingInstruction', tag: 'comment', value: `${prefix}:if ${ifDetails}` })});`;
 }
 function getProcessingInstructionCommentEnd(instruction) {
     if (!instruction.id) {
@@ -98,7 +99,7 @@ function getProcessingInstructionCommentEnd(instruction) {
         return getSSRForEachProcessingInstruction(instruction, true);
     }
     const content = [instruction.tag, instruction.id].join(' ');
-    return `node.appendChild(${transpile_nodes_1.getComment({ type: 'ProcessingInstruction', tag: 'comment', value: `/PI:${content}` })});`;
+    return `node.appendChild(${(0, transpile_nodes_1.getComment)({ type: 'ProcessingInstruction', tag: 'comment', value: `/PI:${content}` })});`;
 }
 function getProcessingInstruction(instruction, isSSR) {
     if (isSSR) {
@@ -135,7 +136,7 @@ function getTextProcessingInstruction(instruction) {
 }
 function getHTMLProcessingInstruction(instruction) {
     const register = (instruction.id) ? `self.register('${instruction.id}', { node, type: 'html' });\n` : '';
-    const attributes = (instruction.attributes) ? transpile_attributes_1.getAttributes(instruction.attributes) : '';
+    const attributes = (instruction.attributes) ? (0, transpile_attributes_1.getAttributes)(instruction.attributes) : '';
     return `node.appendChild((()=>{
           const node = this._getHTMLNode(self._getValue(self.data, '${instruction.value}'));
           ${attributes}${register}return node;
@@ -148,7 +149,7 @@ function getAttributeProcessingInstruction(instruction) {
     }
     return `(elm => {
     let node = getPrecedingOrSelf(elm);
-    ${transpile_attributes_1.getAttributes(attributes)}
+    ${(0, transpile_attributes_1.getAttributes)(attributes)}
   })(node);`;
 }
 function getCSSProcessingInstruction(instruction) {
@@ -210,7 +211,7 @@ function getForEachProcessingInstruction(instruction) {
 }
 function getTemplateProcessingInstruction(instruction, isSSR) {
     if (instruction.children) {
-        return instruction.children.map(instruction => transpile_nodes_1.appendNode(instruction, isSSR)).join('\n');
+        return instruction.children.map(instruction => (0, transpile_nodes_1.appendNode)(instruction, isSSR)).join('\n');
     }
     return `node.appendChild(self._getSubTemplate('${instruction.value}'));`;
 }

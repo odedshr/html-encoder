@@ -10,6 +10,7 @@ function testJSON(originalString, expectedJSON, /*testFileName = undefined*/) {
     //   writeFileSync(`${testFileName}.log.json`, encodedNode);
     // }
 
+    console.log('>>>', encodedNode);
     assert.strictEqual(encodedNode, JSON.stringify(expectedJSON));
   } catch (err) {
     assert.strictEqual(err.toString(), expectedJSON);

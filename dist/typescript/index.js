@@ -7,13 +7,13 @@ const transpile_nodes_1 = require("./transpile.nodes");
 const extract_functions_1 = require("./extract-functions");
 const encoding = 'utf-8';
 function transpile(instructions, type, isSSR = false) {
-    const functions = extract_functions_1.extractFunctions(instructions, type === 'ts', isSSR);
+    const functions = (0, extract_functions_1.extractFunctions)(instructions, type === 'ts', isSSR);
     let parsedString = toTypescript(instructions, isSSR);
     const reactive = treeHasKey(instructions, 'id');
     if (reactive) {
         parsedString += `;self._defineSet();`;
     }
-    return treeShake(fs_1.readFileSync(getTemplateFile(type), { encoding })
+    return treeShake((0, fs_1.readFileSync)(getTemplateFile(type), { encoding })
         .replace(/console\.log\(self, node\)[;,]/, `this.node = ${parsedString};`)
         .replace(getReactivePattern(reactive, isSSR), '')
         .replace(/funcs: { \[key: string\]: Function } = {};/, `funcs: { \[key: string\]: Function } = {${functions}};/*here?*/`)
@@ -33,12 +33,12 @@ function getTemplateFile(type) {
 }
 function toTypescript(instruction, isSSR = false) {
     switch (instruction.type) {
-        case 'document': return transpile_nodes_1.getDocument(instruction, isSSR);
-        case 'documentFragment': return transpile_nodes_1.getDocumentFragment(instruction, isSSR);
-        case 'text': return transpile_nodes_1.getTextNode(instruction);
-        case 'element': return transpile_nodes_1.getHTMLElement(instruction, isSSR);
-        case 'comment': return transpile_nodes_1.getComment(instruction);
-        case 'ProcessingInstruction': return transpile_processing_instruction_1.getProcessingInstruction(instruction, isSSR);
+        case 'document': return (0, transpile_nodes_1.getDocument)(instruction, isSSR);
+        case 'documentFragment': return (0, transpile_nodes_1.getDocumentFragment)(instruction, isSSR);
+        case 'text': return (0, transpile_nodes_1.getTextNode)(instruction);
+        case 'element': return (0, transpile_nodes_1.getHTMLElement)(instruction, isSSR);
+        case 'comment': return (0, transpile_nodes_1.getComment)(instruction);
+        case 'ProcessingInstruction': return (0, transpile_processing_instruction_1.getProcessingInstruction)(instruction, isSSR);
     }
 }
 function treeHasKey(node, key) {

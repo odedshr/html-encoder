@@ -7,7 +7,7 @@ const NodeType = {
     Document: 9,
 };
 // feature server-reactivity
-const xmldom_1 = require("xmldom");
+const xmldom_1 = require("@xmldom/xmldom");
 const window = { DOMParser: xmldom_1.DOMParser };
 // feature server-reactivity end
 function getNode(data = {}) {

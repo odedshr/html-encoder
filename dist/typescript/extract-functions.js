@@ -22,7 +22,7 @@ function getIfFunction(instruction, isTypescript, isSSR) {
     const functionName = (_a = instruction.attributes) === null || _a === void 0 ? void 0 : _a.functionName;
     const ifArgs = isTypescript ? 'self:JSNode, docElm:Document, node:Node' : 'self, docElm, node';
     return `${functionName} (${ifArgs}) {
-          const fn = function () { ${((_b = instruction.children) === null || _b === void 0 ? void 0 : _b.map(child => transpile_nodes_1.appendNode(child, isSSR)).join('\n')) || ''} };
+          const fn = function () { ${((_b = instruction.children) === null || _b === void 0 ? void 0 : _b.map(child => (0, transpile_nodes_1.appendNode)(child, isSSR)).join('\n')) || ''} };
 	        return getAddedChildren(node, fn);
         }`;
 }
@@ -38,7 +38,7 @@ function getForeachFunction(instruction, isTypescript, isSSR = false) {
     return `${functionName} (${loopArgs}) {
           const fn = function() {
             ${isSSR ? getServerSideComment(functionName, iterator, index) : ''}
-            ${((_a = instruction.children) === null || _a === void 0 ? void 0 : _a.map(child => transpile_nodes_1.appendNode(child, isSSR)).join('\n')) || ''}
+            ${((_a = instruction.children) === null || _a === void 0 ? void 0 : _a.map(child => (0, transpile_nodes_1.appendNode)(child, isSSR)).join('\n')) || ''}
           };
 
           return self._forEach('${iterator}', '${index}', node, fn, items);

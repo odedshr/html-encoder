@@ -25,7 +25,7 @@ interface NodeWithSet extends Node {
 }
 
 // feature server-reactivity
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
 // feature server-reactivity end
 

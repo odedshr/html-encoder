@@ -9,7 +9,7 @@ function appendNode(instruction, isSSR) {
         case 'text': return `node.appendChild(${getTextNode(instruction)});`;
         case 'element': return `node.appendChild(${getHTMLElement(instruction, isSSR)});`;
         case 'comment': return `node.appendChild(${getComment(instruction)});`;
-        case 'ProcessingInstruction': return transpile_processing_instruction_1.getProcessingInstruction(instruction, isSSR);
+        case 'ProcessingInstruction': return (0, transpile_processing_instruction_1.getProcessingInstruction)(instruction, isSSR);
     }
     return '';
 }
@@ -44,7 +44,7 @@ function getTextNode(instruction) {
 }
 exports.getTextNode = getTextNode;
 function getHTMLElement(instruction, isSSR) {
-    const attributes = (instruction.attributes) ? transpile_attributes_1.getAttributes(instruction.attributes) : '';
+    const attributes = (instruction.attributes) ? (0, transpile_attributes_1.getAttributes)(instruction.attributes) : '';
     return `(()=>{
     const node = docElm.createElement('${instruction.tag}');
     ${attributes}${appendChildren(instruction.children, isSSR)}
