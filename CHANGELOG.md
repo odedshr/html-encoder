@@ -97,3 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 📝 added repository to package.json
 - 📝 updated Readme
+
+## [2.0.7] - 2022-01-13
+
+- ⬆️ Upgraded dependencies
