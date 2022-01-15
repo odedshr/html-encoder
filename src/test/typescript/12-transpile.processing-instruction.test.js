@@ -7,10 +7,10 @@ describe('html-encoder-typescript: transpile.process-instruction', () => {
   }, true),
     '\n' +
     '    \n' +
-    '    node.appendChild((()=>{\n' +
+    '    node.appendChild((docElm => {\n' +
     "    const node = docElm.appendChild(docElm.createProcessingInstruction('unknown',''));\n" +
     '    return node;\n' +
-    '  })());;\n' +
+    '  })(self.docElm));;\n' +
     '    \n' +
     '  '
   ));
@@ -27,7 +27,7 @@ describe('html-encoder-typescript: transpile.process-instruction', () => {
     '\n' +
     '    \n' +
     '    { \n' +
-    '          const fn = self.funcs.undefined.bind({},self, docElm, node);\n' +
+    '          const fn = self.funcs.undefined.bind({},self, self.docElm, node);\n' +
     '\t\t\t\t\tconst startAt = node.childNodes.length;\n' +
     "          const items = clone(self._getValue(self.data, 'undefined')) || [];\n" +
     '\t\t\t\t\tconst nodes = fn(items);\n' +
@@ -46,6 +46,6 @@ describe('html-encoder-typescript: transpile.process-instruction', () => {
   it('handles css instruction', () => assert.strictEqual(getProcessingInstruction({
     tag: 'css'
   }, true),
-    '\n    node.appendChild(docElm.createComment(`PI:css `));\n    ;\n    \n  '
+    '\n    node.appendChild(self.docElm.createComment(`PI:css `));\n    ;\n    \n  '
   ));
 });

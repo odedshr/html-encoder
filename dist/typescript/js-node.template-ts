@@ -1,4 +1,4 @@
-declare type KeyedObject = { [key: string]: any };
+export declare type KeyedObject = { [key: string]: any };
 declare type Property = {
   type: 'text' | 'html' | 'attribute' | 'foreach' | 'if';
   node: Node;
@@ -20,7 +20,7 @@ const NodeType = {
   Document: 9,
 };
 
-interface NodeWithSet extends Node {
+export interface NodeWithSet extends Node {
   set: { [key: string]: Property[] }
 }
 
@@ -28,8 +28,9 @@ interface NodeWithSet extends Node {
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
 // feature server-reactivity end
+const domParser: DOMParser = new window.DOMParser();
 
-export function getNode(data: { [key: string]: any } = {}): NodeWithSet {
+export function getNode(data: KeyedObject = {}): NodeWithSet {
   return <NodeWithSet><unknown>new JSNode(data);
 }
 
@@ -41,15 +42,10 @@ export default class JSNode {
   set: { [key: string]: Property[] } = {};
   data: { [key: string]: any };
   node: ChildNode;
-  domParser: DOMParser;
-  docElm: Document;
+  docElm: Document = this.getDocElm();
   funcs: { [key: string]: Function } = {};
 
   constructor(data: object, existingNode?: ChildNode) {
-    this.domParser = new window.DOMParser();
-
-    this.docElm = this.getDocElm();
-
     this.data = data;
 
     if (existingNode) {
@@ -74,7 +70,7 @@ export default class JSNode {
       initChild(self, <Element>node);
     }
     // feature browser-reactivity
-    addReactiveFunctionality(<Element>node, this.set, this.domParser);
+    addReactiveFunctionality(<Element>node, this.set);
     // feature browser-reactivity end
 
     return node;
@@ -83,19 +79,17 @@ export default class JSNode {
   private fillNode(): ChildNode {
     const self = this;
 
-    //docElm is used by injected code
-    const docElm = this.docElm;
     // main code goes here:
     //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
     (node => {
       console.log(self, node);
-    })(docElm);
+    })(self.docElm);
     // end of main code
     return this.node;
   }
 
   private getDocElm(): Document {
-    return typeof document !== 'undefined' ? document : this.domParser.parseFromString('<html></html>', 'text/xml');
+    return typeof document !== 'undefined' ? document : domParser.parseFromString('<html></html>', 'text/xml');
   }
 
   // shakeable _setDocumentType
@@ -114,7 +108,7 @@ export default class JSNode {
   }
   // shakeable _setDocumentType end
 
-  // feature reactivity
+  // feature any-reactivity
   public register(key: string, value: Property) {
     if (!this.set[key]) {
       this.set[key] = [];
@@ -124,10 +118,10 @@ export default class JSNode {
 
   protected _defineSet() {
     if (Object.keys(this.set).length) {
-      addReactiveFunctionality(this.node, this.set, this.domParser);
+      addReactiveFunctionality(this.node, this.set);
     }
   }
-  // feature reactivity end
+  // feature any-reactivity end
 
   // shakeable _getSubTemplate
   _getSubTemplate(templateName: string) {
@@ -162,12 +156,11 @@ export default class JSNode {
     if (path.match(/^(['"].*(\1))$/)) {
       return path.substring(1, path.length - 1);
     }
+    const value = path.replace(/^\!/, '').split('.').reduce(function (ptr: KeyedObject, step: string) {
+      return ptr && ptr.hasOwnProperty(step) ? ptr[step] : undefined;
+    }, data);
 
-    return path[0] === '!'
-      ? !this._getValue(data, path.substr(1))
-      : path.split('.').reduce(function (ptr: KeyedObject, step: string) {
-        return ptr && ptr.hasOwnProperty(step) ? ptr[step] : undefined;
-      }, data);
+    return path[0] === '!' ? !value : value;
   }
   // shakeable _getValue end
 
@@ -197,7 +190,7 @@ export default class JSNode {
     }
 
     try {
-      return <HTMLElement>this.domParser.parseFromString(htmlString, 'text/xml').firstChild;
+      return <HTMLElement>domParser.parseFromString(htmlString, 'text/xml').firstChild;
     } catch (err) {
       console.error(`failed to parse string: ${htmlString}`, err);
       return this.docElm.createTextNode(htmlString);
@@ -274,6 +267,7 @@ function isInstructionWithChildren(comment: string) {
   return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
 }
 
+// feature browser-reactivity
 function safeRemove(parent: Node, child?: Node) {
   if (child) {
     parent.removeChild(child);
@@ -353,7 +347,6 @@ function processServerRenderedProcessInstruction(self: JSNode, parent: Node, chi
   }
 }
 
-// if all keys are consecutive integers from 0 and forward, then return an array
 function getArrayIfPossible(items: { [key: string]: any }) {
   const arr: any[] = [];
   const keys = Object.keys(items);
@@ -367,17 +360,18 @@ function getArrayIfPossible(items: { [key: string]: any }) {
 
   return arr;
 }
+// feature browser-reactivity end
 
-// feature reactivity
-function addReactiveFunctionality(node: ChildNode, set: { [key: string]: Property[] } = {}, domParser: DOMParser) {
+// feature any-reactivity
+function addReactiveFunctionality(node: ChildNode, set: { [key: string]: Property[] } = {}) {
   Object.defineProperty(node, 'set', {
-    value: getSetProxy(set, domParser),
+    value: getSetProxy(set),
     configurable: true,
     writable: true,
   });
 }
 
-function getSetProxy(map: { [key: string]: Property[] }, domParser: DOMParser) {
+function getSetProxy(map: { [key: string]: Property[] }) {
   return new Proxy(map, {
     get: function (map, prop: string) {
       if (map[prop] === undefined) {
@@ -605,7 +599,7 @@ function updateConditional(property: Property, value: boolean) {
   }
 }
 
-// feature reactivity end
+// feature any-reactivity end
 
 // shakeable getSubroutineChildren
 function getSubroutineChildren(node: ChildNode, attribute: string): { [key: string]: ChildNode[][] } {

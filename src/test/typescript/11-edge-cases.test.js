@@ -34,7 +34,7 @@ describe('html-encoder-typescript: edge-cases', () => {
 	it('handles typescript loops', () => {
 		const nodeString = getTSString('<ul><?v@items?><li><?=v?></li><?/@?></ul>');
 
-		assert.ok(nodeString.indexOf("forEachItemsvI0 (self:JSNode, docElm:Document, node:Node, items:any)") > -1);
+		assert.ok(nodeString.indexOf('forEachItemsvI0 (self:JSNode, docElm:Document, node:Node, items:any)') > -1);
 	});
 
 	it('handles es files', () => {

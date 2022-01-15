@@ -188,7 +188,7 @@ function getIfProcessingInstruction(instruction) {
         : '';
     return ` {
           const startAt = node.childNodes.length;
-					const fn = self.funcs.${functionName}.bind({},self, docElm, node);
+					const fn = self.funcs.${functionName}.bind({},self, self.docElm, node);
 					const flag = !!self._getValue(self.data, '${variable}');
 					const nodes = flag ? fn() : [];
 
@@ -202,7 +202,7 @@ function getForEachProcessingInstruction(instruction) {
         ? `self.register('${id}', { type: 'foreach', node , details: { startAt, fn, fnName: '${functionName}', items, nodes } });\n`
         : '';
     return `{ 
-          const fn = self.funcs.${functionName}.bind({},self, docElm, node);
+          const fn = self.funcs.${functionName}.bind({},self, self.docElm, node);
 					const startAt = node.childNodes.length;
           const items = clone(self._getValue(self.data, '${variable}')) || [];
 					const nodes = fn(items);
@@ -216,9 +216,9 @@ function getTemplateProcessingInstruction(instruction, isSSR) {
     return `node.appendChild(self._getSubTemplate('${instruction.value}'));`;
 }
 function getUnknownProcessingInstruction(instruction) {
-    return `node.appendChild((()=>{
+    return `node.appendChild((docElm => {
     const node = docElm.appendChild(docElm.createProcessingInstruction('${instruction.tag}','${instruction.value || ''}'));
     return node;
-  })());`;
+  })(self.docElm));`;
 }
 //# sourceMappingURL=transpile.processing-instruction.js.map

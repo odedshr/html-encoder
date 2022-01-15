@@ -6,7 +6,7 @@ const { test } = require('./utils.js');
 describe('html-encoder-typescript: basic operations', () => {
 	it('converts text', () => test('simple text', {}, 'simple text', ''));
 
-	it('converts static html', () => test('<div>Hello <b>World</b></div>', {}, '<div>Hello <b>World</b></div>'));
+	it('converts static html', () => test('<div>Hello <b>World</b></div>', {}, '<div>Hello <b>World</b></div>', ''));
 
 	it('handles undefined data', () => test('<div>Hello <b>World</b></div>', undefined, '<div>Hello <b>World</b></div>'));
 

@@ -16,23 +16,24 @@ export function transpile(instructions: Instruction, type: TargetType, isSSR: bo
   }
 
   return treeShake(
-    readFileSync(getTemplateFile(type), { encoding })
+    readFileSync(getTemplateFile(__dirname, type), { encoding })
       .replace(/console\.log\(self, node\)[;,]/, `this.node = ${parsedString};`)
       .replace(getReactivePattern(reactive, isSSR), '')
-      .replace(/funcs: { \[key: string\]: Function } = {};/, `funcs: { \[key: string\]: Function } = {${functions}};/*here?*/`)
+      .replace(/funcs: { \[key: string\]: Function } = {};/, `funcs: { \[key: string\]: Function } = {${functions}};`)
       .replace(/funcs = {};/, `funcs = {${functions}};`)
+      .replace(/\n(this\.)?funcs(: { \[key: string\]: Function })? = {};/, '')
       .replace('//# sourceMappingURL=js-node.js.map', '')
   );
 }
 
-function getTemplateFile(type: TargetType): string {
+function getTemplateFile(folderName: String, type: TargetType): string {
   switch (type) {
     case 'ts':
-      return `${__dirname}/js-node.template-ts`;
+      return `${folderName}/js-node.template-ts`;
     case 'es':
-      return `${__dirname}/js-node.es.js`;
+      return `${folderName}/js-node.es.js`;
     default:
-      return `${__dirname}/js-node.js`;
+      return `${folderName}/js-node.js`;
   }
 }
 
@@ -71,20 +72,20 @@ function treeHasKey(node: { [key: string]: any }, key: string) {
 }
 
 function getReactivePattern(reactive: boolean, isSSR: boolean) {
-  let feature = '((browser|server)-)?reactivity';
+  let feature = 'browser|server|any';
 
   if (reactive) {
-    feature = isSSR ? 'browser-reactivity' : 'server-reactivity';
+    feature = isSSR ? 'browser' : 'server';
   }
 
-  return new RegExp(`\\s*\/\/ feature ${feature}\\n[\\s\\S]*?\/\/ feature ${feature} end`, 'gm');
+  return new RegExp(`\\s*\/\/ feature (${feature})-reactivity\\r?\\n[\\s\\S]*?\/\/ feature \\1-reactivity end`, 'gm');
 }
 
 function treeShake(code: string) {
   findFeatures(code).forEach((feature) => {
     const query: string = isFeatureUsed(code, feature)
       ? `\\s*\/\/ shakeable ${feature}( end)?` // remove feature's comments
-      : `\\s*\/\/ shakeable ${feature}\\n[\\s\\S]*?\/\/ shakeable ${feature} end`; // remove feature
+      : `\\s*\/\/ shakeable ${feature}\\r?\\n[\\s\\S]*?\/\/ shakeable ${feature} end`; // remove feature
 
     code = code.replace(new RegExp(query, 'gm'), '');
   });

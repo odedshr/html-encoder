@@ -1,4 +1,4 @@
-declare type KeyedObject = {
+export declare type KeyedObject = {
     [key: string]: any;
 };
 declare type Property = {
@@ -15,15 +15,12 @@ declare type subRoutineInstructions = {
     flag?: boolean;
     nodes?: ChildNode[][];
 };
-interface NodeWithSet extends Node {
+export interface NodeWithSet extends Node {
     set: {
         [key: string]: Property[];
     };
 }
-import { DOMParser } from '@xmldom/xmldom';
-export declare function getNode(data?: {
-    [key: string]: any;
-}): NodeWithSet;
+export declare function getNode(data?: KeyedObject): NodeWithSet;
 export declare function initNode(existingNode: ChildNode): Node;
 export default class JSNode {
     set: {
@@ -33,7 +30,6 @@ export default class JSNode {
         [key: string]: any;
     };
     node: ChildNode;
-    domParser: DOMParser;
     docElm: Document;
     funcs: {
         [key: string]: Function;

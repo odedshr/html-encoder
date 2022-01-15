@@ -7,6 +7,7 @@ const NodeType = {
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
 // feature server-reactivity end
+const domParser = new window.DOMParser();
 export function getNode(data = {}) {
     return new JSNode(data);
 }
@@ -16,9 +17,8 @@ export function initNode(existingNode) {
 export default class JSNode {
     constructor(data, existingNode) {
         this.set = {};
-        this.funcs = {};
-        this.domParser = new window.DOMParser();
         this.docElm = this.getDocElm();
+        this.funcs = {};
         this.data = data;
         if (existingNode) {
             this.node = this.initExitingElement(existingNode);
@@ -42,24 +42,22 @@ export default class JSNode {
             initChild(self, node);
         }
         // feature browser-reactivity
-        addReactiveFunctionality(node, this.set, this.domParser);
+        addReactiveFunctionality(node, this.set);
         // feature browser-reactivity end
         return node;
     }
     fillNode() {
         const self = this;
-        //docElm is used by injected code
-        const docElm = this.docElm;
         // main code goes here:
         //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
         (node => {
             console.log(self, node);
-        })(docElm);
+        })(self.docElm);
         // end of main code
         return this.node;
     }
     getDocElm() {
-        return typeof document !== 'undefined' ? document : this.domParser.parseFromString('<html></html>', 'text/xml');
+        return typeof document !== 'undefined' ? document : domParser.parseFromString('<html></html>', 'text/xml');
     }
     // shakeable _setDocumentType
     _setDocumentType(name, publicId, systemId) {
@@ -77,7 +75,7 @@ export default class JSNode {
         this.node = this.docElm;
     }
     // shakeable _setDocumentType end
-    // feature reactivity
+    // feature any-reactivity
     register(key, value) {
         if (!this.set[key]) {
             this.set[key] = [];
@@ -86,10 +84,10 @@ export default class JSNode {
     }
     _defineSet() {
         if (Object.keys(this.set).length) {
-            addReactiveFunctionality(this.node, this.set, this.domParser);
+            addReactiveFunctionality(this.node, this.set);
         }
     }
-    // feature reactivity end
+    // feature any-reactivity end
     // shakeable _getSubTemplate
     _getSubTemplate(templateName) {
         const self = this;
@@ -120,11 +118,10 @@ export default class JSNode {
         if (path.match(/^(['"].*(\1))$/)) {
             return path.substring(1, path.length - 1);
         }
-        return path[0] === '!'
-            ? !this._getValue(data, path.substr(1))
-            : path.split('.').reduce(function (ptr, step) {
-                return ptr && ptr.hasOwnProperty(step) ? ptr[step] : undefined;
-            }, data);
+        const value = path.replace(/^\!/, '').split('.').reduce(function (ptr, step) {
+            return ptr && ptr.hasOwnProperty(step) ? ptr[step] : undefined;
+        }, data);
+        return path[0] === '!' ? !value : value;
     }
     // shakeable _getValue end
     // shakeable _setValue
@@ -151,7 +148,7 @@ export default class JSNode {
             htmlString = `<span>${htmlString.replace(/& /g, '&amp; ')}</span>`;
         }
         try {
-            return this.domParser.parseFromString(htmlString, 'text/xml').firstChild;
+            return domParser.parseFromString(htmlString, 'text/xml').firstChild;
         }
         catch (err) {
             console.error(`failed to parse string: ${htmlString}`, err);
@@ -219,6 +216,7 @@ function initChild(self, node) {
 function isInstructionWithChildren(comment) {
     return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
 }
+// feature browser-reactivity
 function safeRemove(parent, child) {
     if (child) {
         parent.removeChild(child);
@@ -290,7 +288,6 @@ function processServerRenderedProcessInstruction(self, parent, children) {
             console.error('Unidentified PI:', firstValue);
     }
 }
-// if all keys are consecutive integers from 0 and forward, then return an array
 function getArrayIfPossible(items) {
     const arr = [];
     const keys = Object.keys(items);
@@ -303,15 +300,16 @@ function getArrayIfPossible(items) {
     }
     return arr;
 }
-// feature reactivity
-function addReactiveFunctionality(node, set = {}, domParser) {
+// feature browser-reactivity end
+// feature any-reactivity
+function addReactiveFunctionality(node, set = {}) {
     Object.defineProperty(node, 'set', {
-        value: getSetProxy(set, domParser),
+        value: getSetProxy(set),
         configurable: true,
         writable: true,
     });
 }
-function getSetProxy(map, domParser) {
+function getSetProxy(map) {
     return new Proxy(map, {
         get: function (map, prop) {
             var _a, _b;
@@ -517,7 +515,7 @@ function updateConditional(property, value) {
         property.details.flag = value;
     }
 }
-// feature reactivity end
+// feature any-reactivity end
 // shakeable getSubroutineChildren
 function getSubroutineChildren(node, attribute) {
     const output = {};

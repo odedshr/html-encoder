@@ -19,37 +19,37 @@ function getDocument(instruction, isSSR) {
     const name = (_a = instruction.attributes) === null || _a === void 0 ? void 0 : _a.name;
     const publicId = ((_b = instruction.attributes) === null || _b === void 0 ? void 0 : _b.publicId) || '';
     const systemId = ((_c = instruction.attributes) === null || _c === void 0 ? void 0 : _c.systemId) || '';
-    return `(()=>{
-    const node =  docElm;
+    return `(docElm => {
+    const node = docElm;
     docElm.insertBefore(docElm.implementation.createDocumentType('${name}', '${publicId}', '${systemId}'), docElm.childNodes[0]);
     docElm.removeChild(docElm.childNodes[1]);
     ${appendChildren(instruction.children, isSSR)}
     return docElm;
-  })()`;
+  })(self.docElm)`;
 }
 exports.getDocument = getDocument;
 function getDocumentFragment(instruction, isSSR) {
-    return `(()=>{
+    return `(docElm => {
     const node = docElm.createDocumentFragment();
     ${instruction ? appendChildren(instruction.children, isSSR) : ''}return node;
-  })()`;
+  })(self.docElm)`;
 }
 exports.getDocumentFragment = getDocumentFragment;
 function getComment(instruction) {
-    return `docElm.createComment(\`${instruction.value}\`)`;
+    return `self.docElm.createComment(\`${instruction.value}\`)`;
 }
 exports.getComment = getComment;
 function getTextNode(instruction) {
-    return `docElm.createTextNode(\`${instruction.value}\`)`;
+    return `self.docElm.createTextNode(\`${instruction.value}\`)`;
 }
 exports.getTextNode = getTextNode;
 function getHTMLElement(instruction, isSSR) {
     const attributes = (instruction.attributes) ? (0, transpile_attributes_1.getAttributes)(instruction.attributes) : '';
-    return `(()=>{
+    return `(docElm =>{
     const node = docElm.createElement('${instruction.tag}');
     ${attributes}${appendChildren(instruction.children, isSSR)}
     return node;
-  })()`;
+  })(self.docElm)`;
 }
 exports.getHTMLElement = getHTMLElement;
 function appendChildren(children = [], isSSR) {
