@@ -84,7 +84,7 @@ class NodeParser {
         let liveId = false;
         if (tag.indexOf('?') === 0) {
             instruction.tag = 'if';
-            liveId = this.getLiveId(tag.substr(1), value);
+            liveId = this.getLiveId(tag.substring(1), value);
             instruction.value = this.cleanTag(tag);
             instruction.attributes = {
                 functionName: this.toCamelCase(`if ${[instruction.value, liveId].join('').replace(/\W/g, ' ')}${this.counter++}`)
@@ -104,12 +104,12 @@ class NodeParser {
         }
         else if (tag.indexOf(':') === 0) {
             instruction.tag = 'template';
-            const isImportedFile = /^(["'])(.*)\1$/.exec(tag.substr(1));
+            const isImportedFile = /^(["'])(.*)\1$/.exec(tag.substring(1));
             if (isImportedFile) {
                 instruction.children = [(new NodeParser((0, fs_1.readFileSync)(isImportedFile[2], encoding), this.isTypescript)).getJSON()];
             }
             else {
-                instruction.value = tag.substr(1);
+                instruction.value = tag.substring(1);
             }
         }
         else if (tag.indexOf('attr') === 0) {
@@ -119,12 +119,12 @@ class NodeParser {
         else if (tag.indexOf('==') === 0) {
             instruction.tag = 'html';
             instruction.value = this.cleanTag(tag);
-            liveId = this.getLiveId(tag.substr(2), value);
+            liveId = this.getLiveId(tag.substring(2), value);
         }
         else if (tag.indexOf('=') === 0) {
             instruction.tag = 'text';
             instruction.value = this.cleanTag(tag);
-            liveId = this.getLiveId(tag.substr(1), value);
+            liveId = this.getLiveId(tag.substring(1), value);
         }
         else if (value && value.length) {
             instruction.value = value;

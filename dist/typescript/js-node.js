@@ -1,18 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initNode = exports.getNode = void 0;
+/*NodeType{*/
 const NodeType = {
     Element: 1,
     Comment: 8,
     Document: 9,
-};
-// feature server-reactivity
+}; /*}NodeType*/
+/*server-dynamic{*/
 const xmldom_1 = require("@xmldom/xmldom");
 const window = { DOMParser: xmldom_1.DOMParser };
-// feature server-reactivity end
+/*}server-dynamic*/
 const domParser = new window.DOMParser();
-function getNode(data = {}) {
-    return new JSNode(data);
+function getNode(/*data{*/ data = {} /*}data*/) {
+    return new JSNode(/*data{*/ data /*}data*/);
 }
 exports.getNode = getNode;
 function initNode(existingNode) {
@@ -20,46 +21,23 @@ function initNode(existingNode) {
 }
 exports.initNode = initNode;
 class JSNode {
-    constructor(data, existingNode) {
-        this.set = {};
+    constructor(data, nodeToRevive /*}revive*/ /*}data*/) {
+        /*any-dynamic{*/ this.set = {}; /*}any-dynamic*/
         this.docElm = this.getDocElm();
-        this.funcs = {};
-        this.data = data;
-        if (existingNode) {
-            this.node = this.initExitingElement(existingNode);
-        }
-        else {
-            this.node = this.fillNode();
-        }
-        const self = this;
-        const originalToString = this.node.toString;
-        this.node.toString = () => self.fixHTMLTags(originalToString.call(this.node));
+        /*funcs{*/ this.funcs = { /*funcs go here*/}; /*}funcs*/
+        /*data{*/ this.data = data; /*}data*/
+        this.node = /*revive{*/ nodeToRevive ? initExitingElement(this, nodeToRevive) : /*}revive*/ this.fillNode(this);
+        this.updateToStringMethod(this.node);
         return this.node;
     }
-    initExitingElement(node) {
-        const self = this;
-        if (node.nodeType === NodeType.Document) {
-            Array.from(node.childNodes)
-                .filter((child) => !!child.setAttribute)
-                .forEach((child) => initChild(self, child));
-        }
-        else {
-            initChild(self, node);
-        }
-        // feature browser-reactivity
-        addReactiveFunctionality(node, this.set);
-        // feature browser-reactivity end
-        return node;
+    updateToStringMethod(node) {
+        const originalToString = node.toString;
+        node.toString = () => fixHTMLTags(originalToString.call(node));
     }
-    fillNode() {
-        const self = this;
-        // main code goes here:
+    fillNode(self) {
         //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
-        (node => {
-            console.log(self, node);
-        })(self.docElm);
-        // end of main code
-        return this.node;
+        /* main-code-goes-here */
+        return self.node;
     }
     getDocElm() {
         return typeof document !== 'undefined' ? document : domParser.parseFromString('<html></html>', 'text/xml');
@@ -80,7 +58,7 @@ class JSNode {
         this.node = this.docElm;
     }
     // shakeable _setDocumentType end
-    // feature any-reactivity
+    /*any-dynamic{*/
     register(key, value) {
         if (!this.set[key]) {
             this.set[key] = [];
@@ -92,7 +70,7 @@ class JSNode {
             addReactiveFunctionality(this.node, this.set);
         }
     }
-    // feature any-reactivity end
+    /*}any-dynamic*/
     // shakeable _getSubTemplate
     _getSubTemplate(templateName) {
         const self = this;
@@ -160,14 +138,11 @@ class JSNode {
             return this.docElm.createTextNode(htmlString);
         }
     }
-    // shakeable _getHTMLNode end
-    // shakeable fixHTMLTags
-    fixHTMLTags(xmlString) {
-        return xmlString.replace(/\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm, '<$1$2></$1>');
-    }
 }
 exports.default = JSNode;
-// functions goes here
+function fixHTMLTags(xmlString) {
+    return xmlString.replace(/\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm, '<$1$2></$1>');
+}
 // shakeable getAddedChildren
 function getAddedChildren(parent, fn) {
     const items = [];
@@ -185,6 +160,21 @@ function clone(item) {
     return typeof item === 'object' ? Object.freeze(Array.isArray(item) ? [...item] : Object.assign({}, item)) : item;
 }
 // shakeable clone end
+/*revive{*/
+function initExitingElement(self, node) {
+    if (node.nodeType === NodeType.Document) {
+        Array.from(node.childNodes)
+            .filter((child) => !!child.setAttribute)
+            .forEach((child) => initChild(self, child));
+    }
+    else {
+        initChild(self, node);
+    }
+    /*browser-dynamic{*/
+    addReactiveFunctionality(node, self.set);
+    /*}browser-dynamic*/
+    return node;
+}
 function initChild(self, node) {
     let stack = [];
     Array.from(node.childNodes || [])
@@ -220,9 +210,10 @@ function initChild(self, node) {
     });
 }
 function isInstructionWithChildren(comment) {
-    return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
+    return ['text', 'html', 'foreach', 'if'].indexOf(comment.substring(3)) > -1;
 }
-// feature browser-reactivity
+/*}revive*/
+/*browser-dynamic{*/
 function safeRemove(parent, child) {
     if (child) {
         parent.removeChild(child);
@@ -306,8 +297,8 @@ function getArrayIfPossible(items) {
     }
     return arr;
 }
-// feature browser-reactivity end
-// feature any-reactivity
+/*}browser-dynamic*/
+/*any-dynamic{*/
 function addReactiveFunctionality(node, set = {}) {
     Object.defineProperty(node, 'set', {
         value: getSetProxy(set),
@@ -521,7 +512,7 @@ function updateConditional(property, value) {
         property.details.flag = value;
     }
 }
-// feature any-reactivity end
+/*}any-dynamic*/
 // shakeable getSubroutineChildren
 function getSubroutineChildren(node, attribute) {
     const output = {};

@@ -13,25 +13,24 @@ declare type subRoutineInstructions = {
   flag?: boolean;
   nodes?: ChildNode[][];
 };
-
+/*NodeType{*/
 const NodeType = {
   Element: 1,
   Comment: 8,
   Document: 9,
-};
-
+};/*}NodeType*/
 export interface NodeWithSet extends Node {
   set: { [key: string]: Property[] }
 }
 
-// feature server-reactivity
+/*server-dynamic{*/
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
-// feature server-reactivity end
+/*}server-dynamic*/
 const domParser: DOMParser = new window.DOMParser();
 
-export function getNode(data: KeyedObject = {}): NodeWithSet {
-  return <NodeWithSet><unknown>new JSNode(data);
+export function getNode(/*data{*/data: KeyedObject = {}/*}data*/): NodeWithSet {
+  return <NodeWithSet><unknown>new JSNode(/*data{*/data/*}data*/);
 }
 
 export function initNode(existingNode: ChildNode): Node {
@@ -39,53 +38,30 @@ export function initNode(existingNode: ChildNode): Node {
 }
 
 export default class JSNode {
-  set: { [key: string]: Property[] } = {};
-  data: { [key: string]: any };
+  /*any-dynamic{*/set: { [key: string]: Property[] } = {};/*}any-dynamic*/
+  /*data{*/data: { [key: string]: any };/*}data*/
   node: ChildNode;
   docElm: Document = this.getDocElm();
-  funcs: { [key: string]: Function } = {};
+/*funcs{*/funcs: { [key: string]: Function } = {/*funcs go here*/ };/*}funcs*/
 
-  constructor(data: object, existingNode?: ChildNode) {
-    this.data = data;
+  constructor(data: KeyedObject, nodeToRevive?: ChildNode/*}revive*/ /*}data*/) {
+    /*data{*/this.data = data;/*}data*/
+    this.node = /*revive{*/nodeToRevive ? initExitingElement(this, nodeToRevive) : /*}revive*/this.fillNode(this);
 
-    if (existingNode) {
-      this.node = this.initExitingElement(existingNode);
-    } else {
-      this.node = this.fillNode();
-    }
-
-    const self = this;
-    const originalToString = this.node.toString;
-    this.node.toString = () => self.fixHTMLTags(originalToString.call(this.node));
+    this.updateToStringMethod(this.node);
     return <any>this.node;
   }
 
-  private initExitingElement(node: ChildNode) {
-    const self = this;
-    if (node.nodeType === NodeType.Document) {
-      Array.from(node.childNodes)
-        .filter((child: ChildNode) => !!(<HTMLElement>child).setAttribute)
-        .forEach((child: ChildNode) => initChild(self, <HTMLElement>child));
-    } else {
-      initChild(self, <Element>node);
-    }
-    // feature browser-reactivity
-    addReactiveFunctionality(<Element>node, this.set);
-    // feature browser-reactivity end
-
-    return node;
+  private updateToStringMethod(node: ChildNode) {
+    const originalToString = node.toString;
+    node.toString = () => fixHTMLTags(originalToString.call(node));
   }
 
-  private fillNode(): ChildNode {
-    const self = this;
-
-    // main code goes here:
+  private fillNode(self: JSNode): ChildNode {
     //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
-    (node => {
-      console.log(self, node);
-    })(self.docElm);
-    // end of main code
-    return this.node;
+    /* main-code-goes-here */
+
+    return self.node;
   }
 
   private getDocElm(): Document {
@@ -108,7 +84,7 @@ export default class JSNode {
   }
   // shakeable _setDocumentType end
 
-  // feature any-reactivity
+  /*any-dynamic{*/
   public register(key: string, value: Property) {
     if (!this.set[key]) {
       this.set[key] = [];
@@ -121,7 +97,7 @@ export default class JSNode {
       addReactiveFunctionality(this.node, this.set);
     }
   }
-  // feature any-reactivity end
+  /*}any-dynamic*/
 
   // shakeable _getSubTemplate
   _getSubTemplate(templateName: string) {
@@ -198,17 +174,14 @@ export default class JSNode {
   }
   // shakeable _getHTMLNode end
 
-  // shakeable fixHTMLTags
-  private fixHTMLTags(xmlString: string) {
-    return xmlString.replace(
-      /\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm,
-      '<$1$2></$1>'
-    );
-  }
-  // shakeable fixHTMLTags end
 }
 
-// functions goes here
+function fixHTMLTags(xmlString: string) {
+  return xmlString.replace(
+    /\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm,
+    '<$1$2></$1>'
+  );
+}
 
 // shakeable getAddedChildren
 function getAddedChildren(parent: Node, fn: Function): ChildNode[][] {
@@ -230,6 +203,21 @@ function clone(item: any) {
   return typeof item === 'object' ? Object.freeze(Array.isArray(item) ? [...item] : { ...item }) : item;
 }
 // shakeable clone end
+/*revive{*/
+function initExitingElement(self: JSNode, node: ChildNode) {
+  if (node.nodeType === NodeType.Document) {
+    Array.from(node.childNodes)
+      .filter((child: ChildNode) => !!(<HTMLElement>child).setAttribute)
+      .forEach((child: ChildNode) => initChild(self, <HTMLElement>child));
+  } else {
+    initChild(self, <Element>node);
+  }
+  /*browser-dynamic{*/
+  addReactiveFunctionality(<Element>node, self.set);
+  /*}browser-dynamic*/
+
+  return node;
+}
 
 function initChild(self: JSNode, node: Node) {
   let stack: Node[][] = [];
@@ -264,10 +252,10 @@ function initChild(self: JSNode, node: Node) {
 }
 
 function isInstructionWithChildren(comment: string) {
-  return ['text', 'html', 'foreach', 'if'].indexOf(comment.substr(3)) > -1;
+  return ['text', 'html', 'foreach', 'if'].indexOf(comment.substring(3)) > -1;
 }
-
-// feature browser-reactivity
+/*}revive*/
+/*browser-dynamic{*/
 function safeRemove(parent: Node, child?: Node) {
   if (child) {
     parent.removeChild(child);
@@ -360,9 +348,8 @@ function getArrayIfPossible(items: { [key: string]: any }) {
 
   return arr;
 }
-// feature browser-reactivity end
-
-// feature any-reactivity
+/*}browser-dynamic*/
+/*any-dynamic{*/
 function addReactiveFunctionality(node: ChildNode, set: { [key: string]: Property[] } = {}) {
   Object.defineProperty(node, 'set', {
     value: getSetProxy(set),
@@ -598,8 +585,7 @@ function updateConditional(property: Property, value: boolean) {
     property.details.flag = value;
   }
 }
-
-// feature any-reactivity end
+/*}any-dynamic*/
 
 // shakeable getSubroutineChildren
 function getSubroutineChildren(node: ChildNode, attribute: string): { [key: string]: ChildNode[][] } {

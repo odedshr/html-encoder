@@ -119,6 +119,7 @@ describe('html-encoder-typescript: server-side-rendering tagging', () => {
 			</html>`,
 			{}
 		);
+
 		assert.strictEqual(
 			node.toString(),
 			`<!DOCTYPE html>

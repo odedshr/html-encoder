@@ -3,6 +3,7 @@ import { Instruction } from '../instruction';
 import { getProcessingInstruction } from './transpile.processing-instruction';
 import { getComment, getDocument, getDocumentFragment, getTextNode, getHTMLElement } from './transpile.nodes';
 import { extractFunctions } from './extract-functions';
+import { analyze } from './transpile.analyze';
 
 const encoding = 'utf-8';
 
@@ -10,20 +11,29 @@ export type TargetType = 'js' | 'es' | 'ts';
 export function transpile(instructions: Instruction, type: TargetType, isSSR: boolean = false): string {
   const functions = extractFunctions(instructions, type === 'ts', isSSR);
   let parsedString = toTypescript(instructions, isSSR);
-  const reactive = treeHasKey(instructions, 'id');
-  if (reactive) {
+  const { revivable, attr, css, data } = analyze(instructions);
+  if (revivable) {
     parsedString += `;self._defineSet();`;
   }
 
   return treeShake(
     readFileSync(getTemplateFile(__dirname, type), { encoding })
-      .replace(/console\.log\(self, node\)[;,]/, `this.node = ${parsedString};`)
-      .replace(getReactivePattern(reactive, isSSR), '')
-      .replace(/funcs: { \[key: string\]: Function } = {};/, `funcs: { \[key: string\]: Function } = {${functions}};`)
-      .replace(/funcs = {};/, `funcs = {${functions}};`)
-      .replace(/\n(this\.)?funcs(: { \[key: string\]: Function })? = {};/, '')
+      .replace(select('revive', revivable), '')
+      .replace(select('NodeType', revivable || attr || css), '')
+      .replace('/* main-code-goes-here */', `((node) => { self.node = ${parsedString}; })(self.docElm);`)
+      .replace(select('any\-dynamic', revivable), '')
+      .replace(select('browser\-dynamic', revivable && !isSSR), '')
+      .replace(select('server\-dynamic', revivable && isSSR), '')
+      .replace(select('data', data), '')
+      .replace('/*funcs go here*/', functions)
+      .replace(select('funcs', functions.length > 0), '')
       .replace('//# sourceMappingURL=js-node.js.map', '')
+      .replace(/(\r?\n){2,}/gm, '\n')
   );
+}
+
+function select(sectionName: string, justClosures: boolean) {
+  return new RegExp(justClosures ? `\/\\*\}?(${sectionName})\{?\\*\/` : `\/\\*(${sectionName})\{\\*\/((.|\n)*?)\/\\*\}\\1\\*\/`, 'gm');
 }
 
 function getTemplateFile(folderName: String, type: TargetType): string {

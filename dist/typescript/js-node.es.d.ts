@@ -20,7 +20,7 @@ export interface NodeWithSet extends Node {
         [key: string]: Property[];
     };
 }
-export declare function getNode(data?: KeyedObject): NodeWithSet;
+export declare function getNode(/*data{*/ data?: KeyedObject): NodeWithSet;
 export declare function initNode(existingNode: ChildNode): Node;
 export default class JSNode {
     set: {
@@ -34,8 +34,8 @@ export default class JSNode {
     funcs: {
         [key: string]: Function;
     };
-    constructor(data: object, existingNode?: ChildNode);
-    private initExitingElement;
+    constructor(data: KeyedObject, nodeToRevive?: ChildNode);
+    private updateToStringMethod;
     private fillNode;
     private getDocElm;
     protected _setDocumentType(name: string, publicId: string, systemId: string): void;
@@ -46,6 +46,5 @@ export default class JSNode {
     _getValue(data: KeyedObject, path: string): any;
     _setValue(data: KeyedObject, path: string, value: any): void;
     _getHTMLNode(htmlString: string | HTMLElement): HTMLElement | Text;
-    private fixHTMLTags;
 }
 export {};

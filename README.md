@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/odedshr/html-encoder.svg?branch=master)](https://travis-ci.org/odedshr/html-encoder-core)
 
-[![Dependency Status](https://david-dm.org/odedshr/html-encoder.svg?theme=shields.io)](https://david-dm.org/odedshr/html-encoder-core)
-
 [![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://github.com/odedshr/html-encoder/blob/master/LICENSE)
 
 ## The Main Gist
@@ -276,25 +274,13 @@ console.log(myForm.set.starCount); // should have the reference to the value;
 
 ## The idea behind the project The HTML
 
-The native HTML `<template>` element can be useful when (a) we have repetitive HTML content; or (b) when we're introducing new content. But
+The native HTML `<template>` element can be useful when (a) we have repetitive HTML content; or (b) when we're introducing new content. But because of the static nature of HTML which doesn't really support any data-binding on its own, the `template` element becomes meaningless:
 
-because of the static nature of HTML which doesn't really support any data-binding on its own, the `template` element
-
-becomes meaningless:
-
-I believe that there is a conceptual flaw with HTML `<template >` element (or maybe it is I who failed to find a reasonable tutorial how to use it properly): `<template >` tags are meant to help having dynamic content in the page by providing the template as base, but as long as it
-
-is handled using javascript and not a pure-browser-native code, it must be encoded (for performance sake) to
-
-javascript before being used, and if the translation occurs at the browser-side then by definition it'll effect
-
-performance.
+I believe that there is a conceptual flaw with HTML `<template >` element (or maybe it is I who failed to find a reasonable tutorial how to use it properly): `<template >` tags are meant to help having dynamic content in the page by providing the template as base, but as long as it is handled using javascript and not a pure-browser-native code, it must be encoded (for performance sake) to javascript before being used, and if the translation occurs at the browser-side then by definition it'll effect performance.
 
 ### How could it have worked natively
 
-1. `<template>` tag should have a `data-bind` attribute, which is then connected to a javascript variable hold an object (or
-
-   array of objects) with fields that will be populated natively. For example:
+1. `<template>` tag should have a `data-bind` attribute, which is then connected to a javascript variable hold an object (or array of objects) with fields that will be populated natively. For example:
 
    ```html
    `<template data-bind="names"><li data-bind="name"></li></template>`
@@ -304,9 +290,7 @@ performance.
 
 2. If we could `data-bind-src` a URL with either JSON or XML data to be natively parsed into our template. But in all fairness, we don't need a `template` tag for that, we just need the html `bind` attribute.
 
-   This would work great for pseudo-static HTML files (in the sense that there's no Javascript required for the
-
-   page to function).
+   This would work great for pseudo-static HTML files (in the sense that there's no Javascript required for the page to function).
 
    And should we want a dynamic page perhaps we could pick the TemplateElement and use its `clone(data)` method to populate it with our data, so the usage would be:
 
@@ -322,9 +306,7 @@ Without native-browser-based data-population and without javascript-less support
 
 ### JSX as a template alternative
 
-And now let's talk about [JSX](https://medium.com/javascript-scene/jsx-looks-like-an-abomination-1c1ec351a918), which is another kind of
-
-template. JSX in essence, is a pseudo-html code written within JS code and then pre-compiled to pure JS which is served to the browser.
+And now let's talk about [JSX](https://medium.com/javascript-scene/jsx-looks-like-an-abomination-1c1ec351a918), which is another kind of template. JSX in essence, is a pseudo-html code written within JS code and then pre-compiled to pure JS which is served to the browser.
 
 Quite Similarly, [Svelte](https://gist.github.com/Rich-Harris/0f910048478c2a6505d1c32185b61934) is quite nice idea
 

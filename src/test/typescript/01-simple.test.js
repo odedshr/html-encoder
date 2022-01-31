@@ -4,7 +4,7 @@ const domParser = new DOMParser();
 const { test } = require('./utils.js');
 
 describe('html-encoder-typescript: basic operations', () => {
-	it('converts text', () => test('simple text', {}, 'simple text', ''));
+	it('converts text', () => test('simple text', {}, 'simple text'));
 
 	it('converts static html', () => test('<div>Hello <b>World</b></div>', {}, '<div>Hello <b>World</b></div>', ''));
 
@@ -35,7 +35,7 @@ describe('html-encoder-typescript: basic operations', () => {
 
 	// The encoder uses ProcessInstructions (PI) to properly parse dynamic files. However if it sees an unknown PI,
 	// it simply ignores it.
-	it('ignores unknown PI', () => test('<?unknown?>', {}, '<?unknown ?>'));
+	it('ignores unknown PI', () => test('<?unknown?>', {}, '<?unknown ?>', ''));
 
 	it('converts comments', () => test('<!-- a comment -->', {}, '<!-- a comment -->'));
 

@@ -5,23 +5,32 @@ const fs_1 = require("fs");
 const transpile_processing_instruction_1 = require("./transpile.processing-instruction");
 const transpile_nodes_1 = require("./transpile.nodes");
 const extract_functions_1 = require("./extract-functions");
+const transpile_analyze_1 = require("./transpile.analyze");
 const encoding = 'utf-8';
 function transpile(instructions, type, isSSR = false) {
     const functions = (0, extract_functions_1.extractFunctions)(instructions, type === 'ts', isSSR);
     let parsedString = toTypescript(instructions, isSSR);
-    const reactive = treeHasKey(instructions, 'id');
-    if (reactive) {
+    const { revivable, attr, css, data } = (0, transpile_analyze_1.analyze)(instructions);
+    if (revivable) {
         parsedString += `;self._defineSet();`;
     }
     return treeShake((0, fs_1.readFileSync)(getTemplateFile(__dirname, type), { encoding })
-        .replace(/console\.log\(self, node\)[;,]/, `this.node = ${parsedString};`)
-        .replace(getReactivePattern(reactive, isSSR), '')
-        .replace(/funcs: { \[key: string\]: Function } = {};/, `funcs: { \[key: string\]: Function } = {${functions}};`)
-        .replace(/funcs = {};/, `funcs = {${functions}};`)
-        .replace(/\n(this\.)?funcs(: { \[key: string\]: Function })? = {};/, '')
-        .replace('//# sourceMappingURL=js-node.js.map', ''));
+        .replace(select('revive', revivable), '')
+        .replace(select('NodeType', revivable || attr || css), '')
+        .replace('/* main-code-goes-here */', `((node) => { self.node = ${parsedString}; })(self.docElm);`)
+        .replace(select('any\-dynamic', revivable), '')
+        .replace(select('browser\-dynamic', revivable && !isSSR), '')
+        .replace(select('server\-dynamic', revivable && isSSR), '')
+        .replace(select('data', data), '')
+        .replace('/*funcs go here*/', functions)
+        .replace(select('funcs', functions.length > 0), '')
+        .replace('//# sourceMappingURL=js-node.js.map', '')
+        .replace(/(\r?\n){2,}/gm, '\n'));
 }
 exports.transpile = transpile;
+function select(sectionName, justClosures) {
+    return new RegExp(justClosures ? `\/\\*\}?(${sectionName})\{?\\*\/` : `\/\\*(${sectionName})\{\\*\/((.|\n)*?)\/\\*\}\\1\\*\/`, 'gm');
+}
 function getTemplateFile(folderName, type) {
     switch (type) {
         case 'ts':
