@@ -306,25 +306,26 @@ Without native-browser-based data-population and without javascript-less support
 
 ### JSX as a template alternative
 
-And now let's talk about [JSX](https://medium.com/javascript-scene/jsx-looks-like-an-abomination-1c1ec351a918), which is another kind of template. JSX in essence, is a pseudo-html code written within JS code and then pre-compiled to pure JS which is served to the browser.
+[JSX](https://medium.com/javascript-scene/jsx-looks-like-an-abomination-1c1ec351a918) is another kind of template. In essence, is a pseudo-html code written within JS code and then pre-compiled to pure JS which is served to the browser. Syntax-wise it's very similar to HTML (with a couple of small exception such as `className`) and it has no "smart logic" (such as loops and conditionals) because it doesn't need it - it lives inside JS code.
+The problem with it that it translates to code that requires React, which you will be forced to include in your project.
 
-Quite Similarly, [Svelte](https://gist.github.com/Rich-Harris/0f910048478c2a6505d1c32185b61934) is quite nice idea
+```
+  <div /> => /* @__PURE__ */ React.createElement("div", null);
+```
 
-It's a much more efficient way to write template but I don't like it, because in order to write proper JSX you need to proficient in both HTML and Javascript and for me it feels like a mix of responsibilities: HTML provides the structure to our page, while javascript provides computability and these are two different things from my point of view. I believe this separation of concern is bound to result in better code.
+Quite Similarly, [Svelte](https://gist.github.com/Rich-Harris/0f910048478c2a6505d1c32185b61934) translates html to js code. It has "smart logic" using handlebars. It's a much more efficient way to write template but I don't like it, because in order to write proper JSX you need to proficient in both HTML and Javascript and for me it feels like a mix of responsibilities: HTML provides the structure to our page, while javascript provides computability and these are two different things from my point of view. I believe this separation of concern is bound to result in better code.
 
 ### This is where the html-encoder comes in
 
-I would like to write a normal HTML file but empower it with a `data-bind` attribute without any additional javascript programming (it
+I would like to write a normal HTML file but empower it with a `data-bind` attribute without any additional javascript programming (it would have been nice to do so natively but that's just wishful thinking) and this HTML can be pre-compiled on the server and served as a static page (dynamic-content is bonus). The `HTML encoder` does exactly that:
 
-would have been nice to do so natively but that's just wishful thinking) and this HTML can be pre-compiled on the server and served as a static page (live-refresh is bonus). The `HTML encoder` does exactly that:
-
-1. Write a normal HTML file
+1. You write a normal HTML file
 
 2. Import it to your javascript code using `import { getNode } from './example.template';` and then use it by appending it to the DOM -`document.appendChild(getNode());`
 
 ### The `<?...?>` tag
 
-A guiding principle was to write an HTML valid code, but this raised the question - "Where can we place the computational instructions required?" and I found the Process Instructions (PI for short). they look a bit ugly I must admit -`<? ... ?>` but for the proof-of-concept they serve their purpose. Looking at other template systems such as [Vue](https://medium.com/@Pier/vue-js-the-good-the-meh-and-the-ugly-82800bbe6684), the PIs are attributes in the elements or new html-invalid elements (i.e. not part of the HTML language), While the `<? ... ?>` is a valid HTML element.
+A guiding principle was to write an HTML valid code, but this raised the question - "Where can we place the computational instructions (aka the smart logic) required?" and I found the Process Instructions (PI for short). they look a bit ugly I must admit -`<? ... ?>` but for the proof-of-concept they serve their purpose. Looking at other template systems such as [Vue](https://medium.com/@Pier/vue-js-the-good-the-meh-and-the-ugly-82800bbe6684), the PIs are attributes in the elements or new html-invalid elements (i.e. not part of the HTML language), While the `<? ... ?>` is a valid HTML element.
 
 ## Cheat-sheet
 
@@ -335,7 +336,7 @@ A guiding principle was to write an HTML valid code, but this raised the questio
 5. Attributes: `<?attr key1=varName1 key2=varName2?>`will set the attributes in preceding element `<?attr attrObject?>` will set the attributes described in the `attrObject` (e.g. `<img/><?attr attrMap?> // attrMap={ src: "...", alt: "...", width: ...}` )
 6. CSS classes: `<?css varName?>`will set the class(es) described in the variable that can be either a string or an array. it's also possible to condition a class by writing `<?class condition?varName?>`.
 7. SubTemplates: When a subTemplates' class is provided with the data it can be used with`<?:subTemplateVarName?>`
-8. Editable content: you can access nodes and attributes via`node.set.XXX` -
+8. Editable content: you can access nodes and attributes via `node.set.XXX` -
    - All elements that have an id (e.g. `<img id="editable" />` => `node.set.editable.src="..."`)
    - `<?=text#?>` => `node.set.text = 'hello world'`
    - `<?==text␣#value?>` => `node.set.value = 'hello world'`

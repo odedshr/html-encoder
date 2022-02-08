@@ -1,27 +1,27 @@
-/*NodeType{*/
+/*!NodeType{*/
 const NodeType = {
     Element: 1,
     Comment: 8,
     Document: 9,
-}; /*}NodeType*/
-/*server-dynamic{*/
+}; /*!}NodeType*/
+/*!server-dynamic{*/
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
-/*}server-dynamic*/
+/*!}server-dynamic*/
 const domParser = new window.DOMParser();
-export function getNode(/*data{*/ data = {} /*}data*/) {
-    return new JSNode(/*data{*/ data /*}data*/);
+export function getNode(/*!data{*/ data = {} /*!}data*/) {
+    return new JSNode(/*!data{*/ data /*!}data*/);
 }
 export function initNode(existingNode) {
     return new JSNode({}, existingNode);
 }
 export default class JSNode {
-    constructor(data, nodeToRevive /*}revive*/ /*}data*/) {
-        /*any-dynamic{*/ this.set = {}; /*}any-dynamic*/
+    constructor(data, nodeToRevive /*!}revive*/ /*!}data*/) {
+        /*!any-dynamic{*/ this.set = {}; /*!}any-dynamic*/
         this.docElm = this.getDocElm();
-        /*funcs{*/ this.funcs = { /*funcs go here*/}; /*}funcs*/
-        /*data{*/ this.data = data; /*}data*/
-        this.node = /*revive{*/ nodeToRevive ? initExitingElement(this, nodeToRevive) : /*}revive*/ this.fillNode(this);
+        /*!funcs{*/ this.funcs = { /*!funcs go here*/}; /*!}funcs*/
+        /*!data{*/ this.data = data; /*!}data*/
+        this.node = /*!revive{*/ nodeToRevive ? initExitingElement(this, nodeToRevive) : /*!}revive*/ this.fillNode(this);
         this.updateToStringMethod(this.node);
         return this.node;
     }
@@ -31,13 +31,13 @@ export default class JSNode {
     }
     fillNode(self) {
         //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
-        /* main-code-goes-here */
+        /*! main-code-goes-here */
         return self.node;
     }
     getDocElm() {
         return typeof document !== 'undefined' ? document : domParser.parseFromString('<html></html>', 'text/xml');
     }
-    // shakeable _setDocumentType
+    /*!shakeable _setDocumentType{*/
     _setDocumentType(name, publicId, systemId) {
         const nodeDoctype = this.docElm.implementation.createDocumentType(name, publicId, systemId);
         if (this.docElm.doctype) {
@@ -52,8 +52,8 @@ export default class JSNode {
         //@ts-ignore
         this.node = this.docElm;
     }
-    // shakeable _setDocumentType end
-    /*any-dynamic{*/
+    /*!}shakeable _setDocumentType*/
+    /*!any-dynamic{*/
     register(key, value) {
         if (!this.set[key]) {
             this.set[key] = [];
@@ -65,15 +65,15 @@ export default class JSNode {
             addReactiveFunctionality(this.node, this.set);
         }
     }
-    /*}any-dynamic*/
-    // shakeable _getSubTemplate
+    /*!}any-dynamic*/
+    /*!shakeable _getSubTemplate{*/
     _getSubTemplate(templateName) {
         const self = this;
         const Template = self._getValue(this.data, templateName);
         return new Template(this.data);
     }
-    // shakeable _getSubTemplate end
-    // shakeable _forEach
+    /*!}shakeable _getSubTemplate*/
+    /*!shakeable _forEach{*/
     _forEach(iteratorName, indexName, parent, fn, list) {
         const self = this;
         const orig = {
@@ -90,8 +90,8 @@ export default class JSNode {
         self._setValue(this.data, indexName, orig.index);
         return items;
     }
-    // shakeable _forEach end
-    // shakeable _getValue
+    /*!}shakeable _forEach*/
+    /*!shakeable _getValue{*/
     _getValue(data, path) {
         if (path.match(/^(['"].*(\1))$/)) {
             return path.substring(1, path.length - 1);
@@ -101,8 +101,8 @@ export default class JSNode {
         }, data);
         return path[0] === '!' ? !value : value;
     }
-    // shakeable _getValue end
-    // shakeable _setValue
+    /*}!shakeable _getValue*/
+    /*!shakeable _setValue{*/
     _setValue(data, path, value) {
         const pathParts = path.split('.');
         const varName = pathParts.pop();
@@ -112,8 +112,8 @@ export default class JSNode {
             }, data)[varName] = value;
         }
     }
-    // shakeable _setValue end
-    // shakeable _getHTMLNode
+    /*!}shakeable _setValue*/
+    /*!shakeable _getHTMLNode{*/
     _getHTMLNode(htmlString) {
         if (!(typeof htmlString === 'string')) {
             return htmlString;
@@ -137,7 +137,7 @@ export default class JSNode {
 function fixHTMLTags(xmlString) {
     return xmlString.replace(/\<(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([a-z|A-Z|_|\-|:|0-9]+)([^>]*)\/\>/gm, '<$1$2></$1>');
 }
-// shakeable getAddedChildren
+/*!shakeable getAddedChildren{*/
 function getAddedChildren(parent, fn) {
     const items = [];
     const beforeChildCount = parent.childNodes.length;
@@ -148,13 +148,13 @@ function getAddedChildren(parent, fn) {
     }
     return [items];
 }
-// shakeable getAddedChildren end
-// shakeable clone
+/*!}shakeable getAddedChildren*/
+/*!shakeable clone{*/
 function clone(item) {
     return typeof item === 'object' ? Object.freeze(Array.isArray(item) ? [...item] : Object.assign({}, item)) : item;
 }
-// shakeable clone end
-/*revive{*/
+/*!}shakeable clone*/
+/*!revive{*/
 function initExitingElement(self, node) {
     if (node.nodeType === NodeType.Document) {
         Array.from(node.childNodes)
@@ -164,9 +164,9 @@ function initExitingElement(self, node) {
     else {
         initChild(self, node);
     }
-    /*browser-dynamic{*/
+    /*!browser-dynamic{*/
     addReactiveFunctionality(node, self.set);
-    /*}browser-dynamic*/
+    /*!}browser-dynamic*/
     return node;
 }
 function initChild(self, node) {
@@ -206,8 +206,8 @@ function initChild(self, node) {
 function isInstructionWithChildren(comment) {
     return ['text', 'html', 'foreach', 'if'].indexOf(comment.substring(3)) > -1;
 }
-/*}revive*/
-/*browser-dynamic{*/
+/*!}revive*/
+/*!browser-dynamic{*/
 function safeRemove(parent, child) {
     if (child) {
         parent.removeChild(child);
@@ -237,7 +237,7 @@ function processServerRenderedProcessInstruction(self, parent, children) {
             });
         case 'PI:foreach':
             {
-                const [id, /* varName */ , fnName] = value;
+                const [id, /*! varName */ , fnName] = value;
                 const items = {};
                 const nodes = [];
                 const startAt = indexOfChild(parent.childNodes, children[0]);
@@ -245,7 +245,7 @@ function processServerRenderedProcessInstruction(self, parent, children) {
                     var _a, _b;
                     const nodeValue = ((_a = child.nodeValue) === null || _a === void 0 ? void 0 : _a.split(' ')) || [];
                     if (child.nodeType === NodeType.Comment && fnName === nodeValue[1]) {
-                        const [/*PI*/ , /* fnName */ , key, value] = nodeValue;
+                        const [/*!PI*/ , /*! fnName */ , key, value] = nodeValue;
                         items[key] = value;
                         nodes.push([]);
                         (_b = child.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(child);
@@ -291,8 +291,8 @@ function getArrayIfPossible(items) {
     }
     return arr;
 }
-/*}browser-dynamic*/
-/*any-dynamic{*/
+/*!}browser-dynamic*/
+/*!any-dynamic{*/
 function addReactiveFunctionality(node, set = {}) {
     Object.defineProperty(node, 'set', {
         value: getSetProxy(set),
@@ -506,8 +506,8 @@ function updateConditional(property, value) {
         property.details.flag = value;
     }
 }
-/*}any-dynamic*/
-// shakeable getSubroutineChildren
+/*!}any-dynamic*/
+/*!shakeable getSubroutineChildren{*/
 function getSubroutineChildren(node, attribute) {
     const output = {};
     Array.from(node.childNodes).forEach((child) => {
@@ -524,13 +524,13 @@ function getSubroutineChildren(node, attribute) {
     });
     return output;
 }
-// shakeable getSubroutineChildren end
-// shakeable getPrecedingOrSelf
+/*!}shakeable getSubroutineChildren*/
+/*!shakeable getPrecedingOrSelf{*/
 function getPrecedingOrSelf(elm) {
     //@ts-ignore (ts doesn't like Array.from)
     const children = Array.from(elm.childNodes);
     children.reverse().filter(child => child.nodeType !== NodeType.Comment);
     return (children.find(child => child.nodeType === NodeType.Element) || elm);
 }
-// shakeable getPrecedingOrSelf end
+/*!}shakeable getPrecedingOrSelf*/ 
 //# sourceMappingURL=js-node.es.js.map

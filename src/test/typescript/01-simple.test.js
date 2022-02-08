@@ -69,5 +69,4 @@ describe('html-encoder-typescript: basic operations', () => {
 	// But it can also be a simple text
 	it('supports <?==text?>', () =>
 		test('<div>Hello <span><?==name?></span></div>', { name: 'World' }, '<div>Hello <span>World</span></div>'));
-
 });

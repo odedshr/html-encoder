@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NodeParser = void 0;
 const html_to_json_1 = require("./html-to-json");
+exports.NodeParser = html_to_json_1.default;
 const index_1 = require("./typescript/index");
 /**
 * Generates a string of instructions how to recreate the provided XML

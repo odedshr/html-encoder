@@ -20,12 +20,12 @@ export function transpile(instructions: Instruction, type: TargetType, isSSR: bo
     readFileSync(getTemplateFile(__dirname, type), { encoding })
       .replace(select('revive', revivable), '')
       .replace(select('NodeType', revivable || attr || css), '')
-      .replace('/* main-code-goes-here */', `((node) => { self.node = ${parsedString}; })(self.docElm);`)
+      .replace('/*! main-code-goes-here */', `((node) => { self.node = ${parsedString}; })(self.docElm);`)
       .replace(select('any\-dynamic', revivable), '')
       .replace(select('browser\-dynamic', revivable && !isSSR), '')
       .replace(select('server\-dynamic', revivable && isSSR), '')
       .replace(select('data', data), '')
-      .replace('/*funcs go here*/', functions)
+      .replace('/*!funcs go here*/', functions)
       .replace(select('funcs', functions.length > 0), '')
       .replace('//# sourceMappingURL=js-node.js.map', '')
       .replace(/(\r?\n){2,}/gm, '\n')
@@ -33,17 +33,18 @@ export function transpile(instructions: Instruction, type: TargetType, isSSR: bo
 }
 
 function select(sectionName: string, justClosures: boolean) {
-  return new RegExp(justClosures ? `\/\\*\}?(${sectionName})\{?\\*\/` : `\/\\*(${sectionName})\{\\*\/((.|\n)*?)\/\\*\}\\1\\*\/`, 'gm');
+  return new RegExp(justClosures ? `\/\\*!?}?(${sectionName})\{?\\*\/` : `\/\\*!?(${sectionName})\{\\*\/((.|\n)*?)\/\\*!?\}\\1\\*\/`, 'gm');
 }
 
 function getTemplateFile(folderName: String, type: TargetType): string {
+  const template = `${folderName}/js-node`;
   switch (type) {
     case 'ts':
-      return `${folderName}/js-node.template-ts`;
+      return `${template}.template-ts`;
     case 'es':
-      return `${folderName}/js-node.es.js`;
+      return `${template}.es.js`;
     default:
-      return `${folderName}/js-node.js`;
+      return `${template}.js`;
   }
 }
 
@@ -58,49 +59,12 @@ function toTypescript(instruction: Instruction, isSSR: boolean = false): string 
   }
 }
 
-function treeHasKey(node: { [key: string]: any }, key: string) {
-  const items: string[] = Object.keys(node);
-
-  while (items.length) {
-    const current = items.shift() || '';
-    if (current === key) {
-      return true;
-    } else if (current === 'attributes') {
-      const childResult = Object.keys(node.attributes)
-        .find((attr: any) => treeHasKey(node.attributes[attr], key));
-      if (childResult) {
-        return true;
-      }
-    } else if (Array.isArray(node[current])) {
-      const childResult = node[current].find((child: any) => treeHasKey(child, key));
-      if (childResult) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-function getReactivePattern(reactive: boolean, isSSR: boolean) {
-  let feature = 'browser|server|any';
-
-  if (reactive) {
-    feature = isSSR ? 'browser' : 'server';
-  }
-
-  return new RegExp(`\\s*\/\/ feature (${feature})-reactivity\\r?\\n[\\s\\S]*?\/\/ feature \\1-reactivity end`, 'gm');
-}
-
 function treeShake(code: string) {
-  findFeatures(code).forEach((feature) => {
-    const query: string = isFeatureUsed(code, feature)
-      ? `\\s*\/\/ shakeable ${feature}( end)?` // remove feature's comments
-      : `\\s*\/\/ shakeable ${feature}\\r?\\n[\\s\\S]*?\/\/ shakeable ${feature} end`; // remove feature
-
-    code = code.replace(new RegExp(query, 'gm'), '');
-  });
-
-  return code;
+  return findFeatures(code)
+    .reduce(
+      (code: string, feature: string) => code.replace(select(`shakeable ${feature}`, isFeatureUsed(code, feature)), ''),
+      code
+    );
 }
 
 function isFeatureUsed(code: string, feature: string): boolean {
@@ -108,7 +72,7 @@ function isFeatureUsed(code: string, feature: string): boolean {
 }
 
 function findFeatures(code: string): string[] {
-  const featureFinder: RegExp = /\s*\/\/ shakeable (\w*) end\n/g;
+  const featureFinder: RegExp = /\/\*!shakeable (\w*){\*\/\n/g;
   const features: string[] = [];
   let match: RegExpExecArray | null;
   while ((match = featureFinder.exec(code)) !== null) {

@@ -19,3 +19,5 @@ export default function htmlEncoder(html: string, type: TargetType = 'js', isSSR
 
   return toESCode(parser.getJSON(), type, isSSR);
 }
+
+export { NodeParser };

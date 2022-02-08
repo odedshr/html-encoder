@@ -1,3 +1,4 @@
+import NodeParser from './html-to-json';
 import { TargetType as ESTypes } from './typescript/index';
 export declare type TargetType = 'json' | ESTypes;
 /**
@@ -8,3 +9,4 @@ export declare type TargetType = 'json' | ESTypes;
 * @return string - instructions to recreate the HTML.
 */
 export default function htmlEncoder(html: string, type?: TargetType, isSSR?: boolean): string;
+export { NodeParser };

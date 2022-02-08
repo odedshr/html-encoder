@@ -1,5 +1,5 @@
 export declare type KeyedObject = { [key: string]: any };
-declare type Property = {
+export declare type Property = {
   type: 'text' | 'html' | 'attribute' | 'foreach' | 'if';
   node: Node;
   attrName?: string;
@@ -13,24 +13,24 @@ declare type subRoutineInstructions = {
   flag?: boolean;
   nodes?: ChildNode[][];
 };
-/*NodeType{*/
+/*!NodeType{*/
 const NodeType = {
   Element: 1,
   Comment: 8,
   Document: 9,
-};/*}NodeType*/
+};/*!}NodeType*/
 export interface NodeWithSet extends Node {
   set: { [key: string]: Property[] }
 }
 
-/*server-dynamic{*/
+/*!server-dynamic{*/
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
-/*}server-dynamic*/
+/*!}server-dynamic*/
 const domParser: DOMParser = new window.DOMParser();
 
-export function getNode(/*data{*/data: KeyedObject = {}/*}data*/): NodeWithSet {
-  return <NodeWithSet><unknown>new JSNode(/*data{*/data/*}data*/);
+export function getNode(/*!data{*/data: KeyedObject = {}/*!}data*/): NodeWithSet {
+  return <NodeWithSet><unknown>new JSNode(/*!data{*/data/*!}data*/);
 }
 
 export function initNode(existingNode: ChildNode): Node {
@@ -38,15 +38,15 @@ export function initNode(existingNode: ChildNode): Node {
 }
 
 export default class JSNode {
-  /*any-dynamic{*/set: { [key: string]: Property[] } = {};/*}any-dynamic*/
-  /*data{*/data: { [key: string]: any };/*}data*/
+  /*!any-dynamic{*/set: { [key: string]: Property[] } = {};/*!}any-dynamic*/
+  /*!data{*/data: { [key: string]: any };/*!}data*/
   node: ChildNode;
   docElm: Document = this.getDocElm();
-/*funcs{*/funcs: { [key: string]: Function } = {/*funcs go here*/ };/*}funcs*/
+/*!funcs{*/funcs: { [key: string]: Function } = {/*!funcs go here*/ };/*!}funcs*/
 
-  constructor(data: KeyedObject, nodeToRevive?: ChildNode/*}revive*/ /*}data*/) {
-    /*data{*/this.data = data;/*}data*/
-    this.node = /*revive{*/nodeToRevive ? initExitingElement(this, nodeToRevive) : /*}revive*/this.fillNode(this);
+  constructor(data: KeyedObject, nodeToRevive?: ChildNode/*!}revive*/ /*!}data*/) {
+    /*!data{*/this.data = data;/*!}data*/
+    this.node = /*!revive{*/ nodeToRevive ? initExitingElement(this, nodeToRevive) : /*!}revive*/ this.fillNode(this);
 
     this.updateToStringMethod(this.node);
     return <any>this.node;
@@ -59,7 +59,7 @@ export default class JSNode {
 
   private fillNode(self: JSNode): ChildNode {
     //@ts-ignore returned value might be DocumentFragment which isn't a childNode, which might cause tsc to complain
-    /* main-code-goes-here */
+    /*! main-code-goes-here */
 
     return self.node;
   }
@@ -68,7 +68,7 @@ export default class JSNode {
     return typeof document !== 'undefined' ? document : domParser.parseFromString('<html></html>', 'text/xml');
   }
 
-  // shakeable _setDocumentType
+  /*!shakeable _setDocumentType{*/
   protected _setDocumentType(name: string, publicId: string, systemId: string) {
     const nodeDoctype = this.docElm.implementation.createDocumentType(name, publicId, systemId);
     if (this.docElm.doctype) {
@@ -82,9 +82,9 @@ export default class JSNode {
     //@ts-ignore
     this.node = this.docElm;
   }
-  // shakeable _setDocumentType end
+  /*!}shakeable _setDocumentType*/
 
-  /*any-dynamic{*/
+  /*!any-dynamic{*/
   public register(key: string, value: Property) {
     if (!this.set[key]) {
       this.set[key] = [];
@@ -97,17 +97,17 @@ export default class JSNode {
       addReactiveFunctionality(this.node, this.set);
     }
   }
-  /*}any-dynamic*/
+  /*!}any-dynamic*/
 
-  // shakeable _getSubTemplate
+  /*!shakeable _getSubTemplate{*/
   _getSubTemplate(templateName: string) {
     const self = this;
     const Template = self._getValue(this.data, templateName);
     return new Template(this.data);
   }
-  // shakeable _getSubTemplate end
+  /*!}shakeable _getSubTemplate*/
 
-  // shakeable _forEach
+  /*!shakeable _forEach{*/
   _forEach(iteratorName: string, indexName: string, parent: Node, fn: Function, list: any): ChildNode[][] {
     const self = this;
     const orig = {
@@ -125,9 +125,9 @@ export default class JSNode {
     self._setValue(this.data, indexName, orig.index);
     return items;
   }
-  // shakeable _forEach end
+  /*!}shakeable _forEach*/
 
-  // shakeable _getValue
+  /*!shakeable _getValue{*/
   _getValue(data: KeyedObject, path: string): any {
     if (path.match(/^(['"].*(\1))$/)) {
       return path.substring(1, path.length - 1);
@@ -138,9 +138,9 @@ export default class JSNode {
 
     return path[0] === '!' ? !value : value;
   }
-  // shakeable _getValue end
+  /*}!shakeable _getValue*/
 
-  // shakeable _setValue
+  /*!shakeable _setValue{*/
   _setValue(data: KeyedObject, path: string, value: any) {
     const pathParts = path.split('.');
     const varName = pathParts.pop();
@@ -150,9 +150,9 @@ export default class JSNode {
       }, data)[varName] = value;
     }
   }
-  // shakeable _setValue end
+  /*!}shakeable _setValue*/
 
-  // shakeable _getHTMLNode
+  /*!shakeable _getHTMLNode{*/
   _getHTMLNode(htmlString: string | HTMLElement) {
     if (!(typeof htmlString === 'string')) {
       return htmlString;
@@ -172,8 +172,7 @@ export default class JSNode {
       return this.docElm.createTextNode(htmlString);
     }
   }
-  // shakeable _getHTMLNode end
-
+  /*!}shakeable _getHTMLNode*/
 }
 
 function fixHTMLTags(xmlString: string) {
@@ -183,7 +182,7 @@ function fixHTMLTags(xmlString: string) {
   );
 }
 
-// shakeable getAddedChildren
+/*!shakeable getAddedChildren{*/
 function getAddedChildren(parent: Node, fn: Function): ChildNode[][] {
   const items = [];
   const beforeChildCount = parent.childNodes.length;
@@ -196,14 +195,14 @@ function getAddedChildren(parent: Node, fn: Function): ChildNode[][] {
 
   return [items];
 }
-// shakeable getAddedChildren end
+/*!}shakeable getAddedChildren*/
 
-// shakeable clone
+/*!shakeable clone{*/
 function clone(item: any) {
   return typeof item === 'object' ? Object.freeze(Array.isArray(item) ? [...item] : { ...item }) : item;
 }
-// shakeable clone end
-/*revive{*/
+/*!}shakeable clone*/
+/*!revive{*/
 function initExitingElement(self: JSNode, node: ChildNode) {
   if (node.nodeType === NodeType.Document) {
     Array.from(node.childNodes)
@@ -212,9 +211,9 @@ function initExitingElement(self: JSNode, node: ChildNode) {
   } else {
     initChild(self, <Element>node);
   }
-  /*browser-dynamic{*/
+  /*!browser-dynamic{*/
   addReactiveFunctionality(<Element>node, self.set);
-  /*}browser-dynamic*/
+  /*!}browser-dynamic*/
 
   return node;
 }
@@ -254,8 +253,8 @@ function initChild(self: JSNode, node: Node) {
 function isInstructionWithChildren(comment: string) {
   return ['text', 'html', 'foreach', 'if'].indexOf(comment.substring(3)) > -1;
 }
-/*}revive*/
-/*browser-dynamic{*/
+/*!}revive*/
+/*!browser-dynamic{*/
 function safeRemove(parent: Node, child?: Node) {
   if (child) {
     parent.removeChild(child);
@@ -290,7 +289,7 @@ function processServerRenderedProcessInstruction(self: JSNode, parent: Node, chi
         });
     case 'PI:foreach':
       {
-        const [id, /* varName */, fnName] = value;
+        const [id, /*! varName */, fnName] = value;
         const items: { [key: string]: any } = {};
         const nodes: ChildNode[][] = [];
         const startAt = indexOfChild(parent.childNodes, children[0] as ChildNode);
@@ -298,7 +297,7 @@ function processServerRenderedProcessInstruction(self: JSNode, parent: Node, chi
         children.forEach(child => {
           const nodeValue = child.nodeValue?.split(' ') || [];
           if (child.nodeType === NodeType.Comment && fnName === nodeValue[1]) {
-            const [/*PI*/, /* fnName */, key, value] = nodeValue;
+            const [/*!PI*/, /*! fnName */, key, value] = nodeValue;
             items[key] = value;
             nodes.push([]);
             child.parentNode?.removeChild(child);
@@ -348,8 +347,8 @@ function getArrayIfPossible(items: { [key: string]: any }) {
 
   return arr;
 }
-/*}browser-dynamic*/
-/*any-dynamic{*/
+/*!}browser-dynamic*/
+/*!any-dynamic{*/
 function addReactiveFunctionality(node: ChildNode, set: { [key: string]: Property[] } = {}) {
   Object.defineProperty(node, 'set', {
     value: getSetProxy(set),
@@ -585,9 +584,9 @@ function updateConditional(property: Property, value: boolean) {
     property.details.flag = value;
   }
 }
-/*}any-dynamic*/
+/*!}any-dynamic*/
 
-// shakeable getSubroutineChildren
+/*!shakeable getSubroutineChildren{*/
 function getSubroutineChildren(node: ChildNode, attribute: string): { [key: string]: ChildNode[][] } {
   const output: { [key: string]: ChildNode[][] } = {};
   Array.from(node.childNodes).forEach((child: ChildNode) => {
@@ -604,9 +603,9 @@ function getSubroutineChildren(node: ChildNode, attribute: string): { [key: stri
   });
   return output;
 }
-// shakeable getSubroutineChildren end
+/*!}shakeable getSubroutineChildren*/
 
-// shakeable getPrecedingOrSelf
+/*!shakeable getPrecedingOrSelf{*/
 function getPrecedingOrSelf(elm: Node): HTMLElement {
   //@ts-ignore (ts doesn't like Array.from)
   const children = Array.from(elm.childNodes);
@@ -614,4 +613,4 @@ function getPrecedingOrSelf(elm: Node): HTMLElement {
 
   return (children.find(child => child.nodeType === NodeType.Element) || elm) as HTMLElement;
 }
-  // shakeable getPrecedingOrSelf end
+ /*!}shakeable getPrecedingOrSelf*/
