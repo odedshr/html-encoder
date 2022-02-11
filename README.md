@@ -89,9 +89,9 @@ The input may be either a text or a pre-compiled node / HTML Element.
 
 ### Conditionals
 
-- `<??condition>xxx<?/??>` - Add its content only if the variable `condition` is truthy.
+- `<??condition>xxx<?/?>` - Add its content only if the variable `condition` is truthy.
 
-- `<??!condition>xxx<?/??>` - Add its content only if the variable `condition` is falsy.
+- `<??!condition>xxx<?/?>` - Add its content only if the variable `condition` is falsy.
 
 ### Loops
 
@@ -137,7 +137,7 @@ ulTemplate:
 
 ```html
 <ul>
-  <?v@items?><?:LiTemplate?><?/@?>
+  <?v@items?><?:LiTemplate?><?/?>
 </ul>
 ```
 
@@ -331,8 +331,8 @@ A guiding principle was to write an HTML valid code, but this raised the questio
 
 1. `<?=text?>`creates a textNode with the content of the variable named`text`.
 2. `<?==html?>`creates an HTML element with the content of`html`, which can be either an HTML element or a string that will be parsed as HTML.
-3. Conditions: `<??condition?>xxx<?/??>`will add the content only if condition is true. A boolean-negate (`!`) is also available so `<??!condition?>xxx<?/??>` will add the content only if condition is false.
-4. Loops: `<?item:index@items?>xxx<?/@?>`will iterate over items (either an array or an object) providing the key and value and the given variable names (in the example it would be `item` and `index` )
+3. Conditions: `<??condition?>xxx<?/?>`will add the content only if condition is true. A boolean-negate (`!`) is also available so `<??!condition?>xxx<?/?>` will add the content only if condition is false.
+4. Loops: `<?item:index@items?>xxx<?/?>`will iterate over items (either an array or an object) providing the key and value and the given variable names (in the example it would be `item` and `index` )
 5. Attributes: `<?attr key1=varName1 key2=varName2?>`will set the attributes in preceding element `<?attr attrObject?>` will set the attributes described in the `attrObject` (e.g. `<img/><?attr attrMap?> // attrMap={ src: "...", alt: "...", width: ...}` )
 6. CSS classes: `<?css varName?>`will set the class(es) described in the variable that can be either a string or an array. it's also possible to condition a class by writing `<?class condition?varName?>`.
 7. SubTemplates: When a subTemplates' class is provided with the data it can be used with`<?:subTemplateVarName?>`
@@ -340,10 +340,10 @@ A guiding principle was to write an HTML valid code, but this raised the questio
    - All elements that have an id (e.g. `<img id="editable" />` => `node.set.editable.src="..."`)
    - `<?=text#?>` => `node.set.text = 'hello world'`
    - `<?==text␣#value?>` => `node.set.value = 'hello world'`
-   - `<??condition#?>xxx<?/??>` => `node.set.condition = true`
-   - `<??condition␣#flag?>xxx<?/??>` => `node.set.flag = false`
-   - `<?item:index@items#?>xxx<?/@?>` => `node.set.items = [...]`
-   - `<?item:index@items␣#value?>xxx<?/@?>` => `node.set.value = [...]`
+   - `<??condition#?>xxx<?/?>` => `node.set.condition = true`
+   - `<??condition␣#flag?>xxx<?/?>` => `node.set.flag = false`
+   - `<?item:index@items#?>xxx<?/?>` => `node.set.items = [...]`
+   - `<?item:index@items␣#value?>xxx<?/?>` => `node.set.value = [...]`
    - `<?attr attrMap#?>` => `node.set.attrMap = { ...};`
    - `<?attr value#=data?>` => `node.set.value = "foo";`
    - `<?attr value#{varName}=data?> / { data: 2, varName: "key"}` => `node.set.key = 3;`

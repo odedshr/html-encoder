@@ -3,7 +3,7 @@ const { testJSON } = require('./utils.js');
 describe('html-encoder-json: sub-templates', () => {
   it('supports <?:subTemplate?>', () =>
     testJSON(
-      '<ul><?v@items?><?:liTemplate?><?/@?></ul>',
+      '<ul><?v@items?><?:liTemplate?><?/?></ul>',
       {
         "type": "element",
         "tag": "ul",

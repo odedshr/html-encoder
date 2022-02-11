@@ -4,7 +4,7 @@ const tags = / data-live-.*?=".*?"/g;
 
 describe('html-encoder-typescript: server-side-rendering sub-routines', () => {
 	it('supports <?value@array #liveId?></?@?>', () => {
-		const node = getSSRNode('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/@?><li>last</li></ul>', {
+		const node = getSSRNode('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/?><li>last</li></ul>', {
 			items: ['a', 'b', 'c'],
 		});
 		assert.strictEqual(
@@ -23,7 +23,7 @@ describe('html-encoder-typescript: server-side-rendering sub-routines', () => {
 	});
 
 	it('supports multiple ssr loops', () => {
-		const node = getSSRNode('<ul><?v@letters #letters?><li><?=v?></li><?/@?><?v@numbers#?><li><?=v?></li><?/@?></ul>', {
+		const node = getSSRNode('<ul><?v@letters #letters?><li><?=v?></li><?/?><?v@numbers#?><li><?=v?></li><?/?></ul>', {
 			letters: ['a', 'b', 'c'],
 			numbers: ['1', '2', '3'],
 		});
@@ -44,7 +44,7 @@ describe('html-encoder-typescript: server-side-rendering sub-routines', () => {
 			{ k: 'foo', v: 'a' },
 			{ k: 'bar', v: 'b' },
 		];
-		const node = getSSRNode('<dl><?i@items #value?><dt><?=i.k?></dt><dd><?=i.v?></dd><?/@?></dl>', { items });
+		const node = getSSRNode('<dl><?i@items #value?><dt><?=i.k?></dt><dd><?=i.v?></dd><?/?></dl>', { items });
 
 		assert.strictEqual(node.toString(), '<dl><dt>foo</dt><dd>a</dd><dt>bar</dt><dd>b</dd></dl>');
 		items.pop();
@@ -54,8 +54,8 @@ describe('html-encoder-typescript: server-side-rendering sub-routines', () => {
 		assert.strictEqual(node.toString(), '<dl><dt>lax</dt><dd>c</dd><dt>foo</dt><dd>a</dd></dl>');
 	});
 
-	it('supports <??boolean #liveId?>[content]<?/??>', () => {
-		const node = getSSRNode('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', {
+	it('supports <??boolean #liveId?>[content]<?/?>', () => {
+		const node = getSSRNode('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', {
 			foo: true,
 		});
 		assert.strictEqual(node.toString(), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');
@@ -66,8 +66,8 @@ describe('html-encoder-typescript: server-side-rendering sub-routines', () => {
 		assert.strictEqual(node.toString(), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');
 	});
 
-	it('supports <??boolean#?>[content]<?/??>', () => {
-		const node = getSSRNode('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', {
+	it('supports <??boolean#?>[content]<?/?>', () => {
+		const node = getSSRNode('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', {
 			foo: true,
 		});
 		assert.strictEqual(node.toString().replace(tags, ''), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');

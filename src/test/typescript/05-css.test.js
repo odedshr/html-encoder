@@ -24,7 +24,7 @@ describe('html-encoder-typescript: css class', () => {
 
 	it('supports <?css class?> from a looped item', () =>
 		test(
-			'<ul><?item@items?><li><?css item.color?>foo</li><?/@?></ul>',
+			'<ul><?item@items?><li><?css item.color?>foo</li><?/?></ul>',
 			{ items: [{ color: 'red' }, { color: 'green' }, { color: 'blue' }] },
 			'<ul><li class="red">foo</li><li class="green">foo</li><li class="blue">foo</li></ul>'
 		));

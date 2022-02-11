@@ -3,7 +3,7 @@ const { test, getNodeFactory } = require('./utils.js');
 describe('html-encoder-typescript: sub-templates', () => {
   it('supports <?:subTemplate?>', () =>
     test(
-      '<ul><?v@items?><?:liTemplate?><?/@?></ul>',
+      '<ul><?v@items?><?:liTemplate?><?/?></ul>',
       {
         items: ['a', 'b', 'c'],
         liTemplate: getNodeFactory('<li><?=v?></li>'),

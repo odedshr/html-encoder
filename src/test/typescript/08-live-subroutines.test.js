@@ -3,7 +3,7 @@ const { getNode } = require('./utils');
 
 describe('html-encoder-typescript: real-time-sub-routines', () => {
 	it('supports <?value@array #liveId?></?@?>', () => {
-		const node = getNode('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/@?><li>last</li></ul>', {
+		const node = getNode('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/?><li>last</li></ul>', {
 			items: ['a', 'b', 'c'],
 		});
 		assert.strictEqual(node.toString(), '<ul><li>first</li><li>a</li><li>b</li><li>c</li><li>last</li></ul>');
@@ -16,7 +16,7 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 	});
 
 	it('supports live loop that is initially empty', () => {
-		const node = getNode('<ul><li>first</li><?v@items#?><li><?=v?></li><?/@?><li>last</li></ul>', {});
+		const node = getNode('<ul><li>first</li><?v@items#?><li><?=v?></li><?/?><li>last</li></ul>', {});
 		assert.strictEqual(node.toString(), '<ul><li>first</li><li>last</li></ul>');
 		assert.strictEqual(JSON.stringify(node.set.items), '[]');
 		node.set.items = { 'foo': 'a', 'bar': 'b' };
@@ -28,7 +28,7 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 	});
 
 	it('supports multiple live loops', () => {
-		const node = getNode('<ul><?v@letters #letters?><li><?=v?></li><?/@?><?v@numbers#?><li><?=v?></li><?/@?></ul>', {
+		const node = getNode('<ul><?v@letters #letters?><li><?=v?></li><?/?><?v@numbers#?><li><?=v?></li><?/?></ul>', {
 			letters: ['a', 'b', 'c'],
 			numbers: ['1', '2', '3'],
 		});
@@ -43,7 +43,7 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 			{ k: 'foo', v: 'a' },
 			{ k: 'bar', v: 'b' },
 		];
-		const node = getNode('<dl><?i@items #value?><dt><?=i.k?></dt><dd><?=i.v?></dd><?/@?></dl>', { items });
+		const node = getNode('<dl><?i@items #value?><dt><?=i.k?></dt><dd><?=i.v?></dd><?/?></dl>', { items });
 		assert.strictEqual(node.toString(), '<dl><dt>foo</dt><dd>a</dd><dt>bar</dt><dd>b</dd></dl>');
 		items.pop();
 		assert.strictEqual(
@@ -56,8 +56,8 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 		assert.strictEqual(node.toString(), '<dl><dt>lax</dt><dd>c</dd><dt>foo</dt><dd>a</dd></dl>');
 	});
 
-	it('supports <??boolean #liveId?>[content]<?/??>', () => {
-		const node = getNode('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', { foo: true });
+	it('supports <??boolean #liveId?>[content]<?/?>', () => {
+		const node = getNode('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', { foo: true });
 		assert.strictEqual(node.toString(), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');
 		assert.strictEqual(node.set.flag, true, 'value is set to true');
 		node.set.flag = false;
@@ -66,8 +66,8 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 		assert.strictEqual(node.toString(), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');
 	});
 
-	it('supports <??boolean#?>[content]<?/??>', () => {
-		const node = getNode('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', {
+	it('supports <??boolean#?>[content]<?/?>', () => {
+		const node = getNode('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', {
 			foo: true,
 		});
 		assert.strictEqual(node.toString(), '<ul><li>Foo</li><li>aa</li><li>bb</li><li>Bar</li></ul>');
@@ -79,7 +79,7 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 	});
 
 	it('supports using the same flag twice', () => {
-		const node = getNode('<div><??flag1#?>foo<?/??><??flag1#?>bar<?/??></div>', {
+		const node = getNode('<div><??flag1#?>foo<?/?><??flag1#?>bar<?/?></div>', {
 			flag1: true,
 		});
 		assert.strictEqual(node.toString(), '<div>foobar</div>');

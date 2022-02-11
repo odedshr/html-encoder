@@ -95,7 +95,10 @@ class NodeParser {
             liveId = this.getLiveId(tag, value);
             instruction.attributes = this.parseLoop(tag, liveId || '');
         }
-        else if (['/@', '/?'].indexOf(tag) > -1) {
+        else if (['/', '/@', '/?'].indexOf(tag) > -1) {
+            if (tag !== '/') {
+                console.error(`"${tag}" is deprecated and will be replaced with a simple "/".`);
+            }
             instruction.tag = instruction_1.endSubRoutineTag;
         }
         else if (tag.indexOf('css') === 0) {

@@ -3,7 +3,7 @@ const { testJSON } = require('./utils');
 
 describe('html-encoder-json: real-time-sub-routines', () => {
 	it('supports <?value@array #liveId?></?@?>',
-		() => testJSON('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/@?><li>last</li></ul>', {
+		() => testJSON('<ul><li>first</li><?v@items #value?><li><?=v?></li><?/?><li>last</li></ul>', {
 			"type": "element",
 			"tag": "ul",
 			"children": [
@@ -56,7 +56,7 @@ describe('html-encoder-json: real-time-sub-routines', () => {
 	);
 
 	it('supports live loop with varName as liveId',
-		() => testJSON('<ul><li>first</li><?v@items#?><li><?=v?></li><?/@?><li>last</li></ul>', {
+		() => testJSON('<ul><li>first</li><?v@items#?><li><?=v?></li><?/?><li>last</li></ul>', {
 			"type": "element",
 			"tag": "ul",
 			"children": [
@@ -108,8 +108,8 @@ describe('html-encoder-json: real-time-sub-routines', () => {
 		})
 	);
 
-	it('supports <??boolean #liveId?>[content]<?/??>',
-		() => testJSON('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', {
+	it('supports <??boolean #liveId?>[content]<?/?>',
+		() => testJSON('<ul><li>Foo</li><??foo #flag?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', {
 			"type": "element",
 			"tag": "ul",
 			"children": [
@@ -168,8 +168,8 @@ describe('html-encoder-json: real-time-sub-routines', () => {
 		})
 	);
 
-	it('supports <??boolean#?>[content]<?/??>',
-		() => testJSON('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/??><li>Bar</li></ul>', {
+	it('supports <??boolean#?>[content]<?/?>',
+		() => testJSON('<ul><li>Foo</li><??foo#?><li>aa</li><li>bb</li><?/?><li>Bar</li></ul>', {
 			"type": "element",
 			"tag": "ul",
 			"children": [

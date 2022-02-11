@@ -88,7 +88,7 @@ describe('html-encoder-json: css class', () => {
 
 	it('supports <?css class?> from a looped item', () =>
 		testJSON(
-			'<ul><?item@items?><li><?css item.color?>foo</li><?/@?></ul>',
+			'<ul><?item@items?><li><?css item.color?>foo</li><?/?></ul>',
 			{
 				"type": "element",
 				"tag": "ul",

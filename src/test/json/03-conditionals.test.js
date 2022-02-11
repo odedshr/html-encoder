@@ -1,8 +1,8 @@
 const { testJSON } = require('./utils.js');
 
 describe('html-encoder-json: conditionals', () => {
-	it('supports <??booleans?>[content]<?/??>', () =>
-		testJSON('<div><??flag1?>True<?/??><??!flag2?>False<?/??></div>', {
+	it('supports <??booleans?>[content]<?/?>', () =>
+		testJSON('<div><??flag1?>True<?/?><??!flag2?>False<?/?></div>', {
 			"type": "element",
 			"tag": "div",
 			"children": [

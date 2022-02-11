@@ -3,7 +3,7 @@ const { testJSON } = require('./utils.js');
 describe('html-encoder-json: loops', () => {
   it('supports <?value@array?></?@?>', () =>
     testJSON(
-      '<ul><?v@items?><li><?=v?></li><?/@?></ul>',
+      '<ul><?v@items?><li><?=v?></li><?/?></ul>',
       {
         "type": "element",
         "tag": "ul",
@@ -37,7 +37,7 @@ describe('html-encoder-json: loops', () => {
 
   it('supports <?value:key@array?></?@?>', () =>
     testJSON(
-      '<ul><?v:k@items?><li><?=v?><?=k?></li><?/@?></ul>',
+      '<ul><?v:k@items?><li><?=v?><?=k?></li><?/?></ul>',
       {
         "type": "element",
         "tag": "ul",
@@ -77,8 +77,8 @@ describe('html-encoder-json: loops', () => {
 
   it('supports loop end with no start', () =>
     testJSON(
-      '<ul><!-- comment -->foo<span>bar</span><?/@?></ul>',
-      'Error: end of subRoutine without start: ["t{ comment }","t{foo}","span","/@"]'
+      '<ul><!-- comment -->foo<span>bar</span><?/?></ul>',
+      'Error: end of subRoutine without start: ["t{ comment }","t{foo}","span","/"]'
     )
   );
 });
