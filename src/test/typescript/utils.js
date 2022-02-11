@@ -1,10 +1,15 @@
 const assert = require('assert');
-const requireFromString = require('require-from-string');
 const { writeFileSync } = require('fs');
 const htmlEncoder = require('../../../dist/html-encoder').default;
 
+
+function decodeNode(encodedNode) {
+  return new Function('require', `const exports ={}; ${encodedNode}; return exports;`)(require);
+}
+
 function getOutputString(encodedNode, data) {
-  const getNode = requireFromString(encodedNode).getNode;
+
+  const getNode = decodeNode(encodedNode).getNode;
   const jsNode = getNode(data);
 
   return jsNode.toString();
@@ -55,7 +60,7 @@ function getNodeFactory(htmlString, testFileName = undefined) {
     writeFileSync(`${testFileName}.log.js`, encoded);
   }
 
-  return requireFromString(encoded).getNode;
+  return decodeNode(encoded).getNode;
 }
 
 // getNode() returns a JS-based browser-compatible node (we forcefully inject DOMParser in so it could still run server-side)
@@ -68,7 +73,7 @@ function getSsrHtml(htmlString, data, testFileName = undefined) {
 
   testFileName && writeFileSync(`${testFileName}.server.js`, ssrEncoded);
 
-  const getNode = requireFromString(ssrEncoded).getNode;
+  const getNode = decodeNode(ssrEncoded).getNode;
   const node = getNode(data);
 
   testFileName && writeFileSync(`${testFileName}.html`, node.toString());
@@ -87,7 +92,7 @@ function getSSRNode(htmlString, data, testFileName = undefined) {
 
   testFileName && writeFileSync(`${testFileName}.browser.js`, browserEncoded);
 
-  const initNode = requireFromString(browserEncoded).initNode;
+  const initNode = decodeNode(browserEncoded).initNode;
   return initNode(ssrEncodedNode);
 }
 

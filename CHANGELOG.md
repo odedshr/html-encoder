@@ -110,3 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 📝 updated Readme
 - ✨ Cleaned output file
+
+## [2.0.10] - 22-02-11
+
+- ➖ remove request-from-string dependency
