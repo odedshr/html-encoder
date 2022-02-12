@@ -17,7 +17,13 @@ export default function htmlEncoder(html: string, type: TargetType = 'js', isSSR
     return parser.toString();
   }
 
-  return toESCode(parser.getJSON(), type, isSSR);
+  const stringifiedCode = toESCode(parser.getJSON(), type, isSSR);
+
+  return (type === 'code') ? toCode(stringifiedCode) : stringifiedCode;
+}
+
+function toCode(stringifiedCode: string) {
+  return new Function('require', `const exports ={}; ${stringifiedCode}; return exports;`)(require);
 }
 
 export { NodeParser };

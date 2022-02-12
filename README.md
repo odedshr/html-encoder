@@ -23,20 +23,29 @@ See a live example at the [showcase](https://odedshr.github.io/html-encoder-show
   import htmlEncoder, { TargetType } from 'html-encoder';
 
   const xmlString:string = '<html>...</html>';
-  const targetType:TargetType = 'js';
-  const isServerSide:boolean = false;
+  const targetType?:TargetType = 'js';
+  const isServerSide?:boolean = false;
   const codeFile:string = htmlEncoder(xmlString, targetType, isServerSide);
 
 /**
 * Generates a string of instructions how to recreate the provided XML
 * @param string xmlString - can be simple text string, but it if it's XML (HTML or SVG, for example) it'll be parsed accordingly
-* @param TargetType targetType - supported output type. Current available statuses are json, js (javascript), es ("js" file but in ES6 format) and ts (typescript)
+* @param TargetType targetType - supported output type. Current available statuses are json, js (javascript), es ("js" file but in ES6 format), ts (typescript) or 'code' which outputs the actual function, ready to be used.
 * @param boolean isServerSide - a flag indicating whether code should include additional comments that will help the file become dynamic once sent to the browser
 * @return string - instructions to recreate the HTML.
 */
 ```
 
 Standard JS output is [commonJS](https://medium.com/@cgcrutch18/commonjs-what-why-and-how-64ed9f31aa46#:~:text=CommonJS%20is%20a%20module%20formatting,heavily%20influenced%20NodeJS's%20module%20management.)-compliant; Should you wish to have a [ESNext](https://www.javascripttutorial.net/es-next/), you can use the type `es`.
+
+A simple usage example:
+
+```javascript
+import htmlEncoder from 'html-encoder';
+const Node = htmlEncoder('<div>Hello <?=name?></div>','code');
+
+document.appendChild(new Node({name:'World'}));
+```
 
 ### How to use the output
 

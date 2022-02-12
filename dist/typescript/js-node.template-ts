@@ -23,10 +23,10 @@ export interface NodeWithSet extends Node {
   set: { [key: string]: Property[] }
 }
 
-/*!server-dynamic{*/
+/*!nodejs{*/
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
-/*!}server-dynamic*/
+/*!}nodejs*/
 const domParser: DOMParser = new window.DOMParser();
 
 export function getNode(/*!data{*/data: KeyedObject = {}/*!}data*/): NodeWithSet {

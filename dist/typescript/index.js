@@ -20,6 +20,7 @@ function transpile(instructions, type, isSSR = false) {
         .replace(select('any\-dynamic', revivable), '')
         .replace(select('browser\-dynamic', revivable && !isSSR), '')
         .replace(select('server\-dynamic', revivable && isSSR), '')
+        .replace(select('nodejs', (revivable && isSSR) || type === 'code'), '')
         .replace(select('data', data), '')
         .replace('/*!funcs go here*/', functions)
         .replace(select('funcs', functions.length > 0), '')

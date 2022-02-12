@@ -7,10 +7,10 @@ const NodeType = {
     Comment: 8,
     Document: 9,
 }; /*!}NodeType*/
-/*!server-dynamic{*/
+/*!nodejs{*/
 const xmldom_1 = require("@xmldom/xmldom");
 const window = { DOMParser: xmldom_1.DOMParser };
-/*!}server-dynamic*/
+/*!}nodejs*/
 const domParser = new window.DOMParser();
 function getNode(/*!data{*/ data = {} /*!}data*/) {
     return new JSNode(/*!data{*/ data /*!}data*/);

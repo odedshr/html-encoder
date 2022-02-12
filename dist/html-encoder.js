@@ -16,7 +16,11 @@ function htmlEncoder(html, type = 'js', isSSR = false) {
     if (type === 'json') {
         return parser.toString();
     }
-    return (0, index_1.transpile)(parser.getJSON(), type, isSSR);
+    const stringifiedCode = (0, index_1.transpile)(parser.getJSON(), type, isSSR);
+    return (type === 'code') ? toCode(stringifiedCode) : stringifiedCode;
 }
 exports.default = htmlEncoder;
+function toCode(stringifiedCode) {
+    return new Function('require', `const exports ={}; ${stringifiedCode}; return exports;`)(require);
+}
 //# sourceMappingURL=html-encoder.js.map

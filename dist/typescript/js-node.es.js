@@ -4,10 +4,10 @@ const NodeType = {
     Comment: 8,
     Document: 9,
 }; /*!}NodeType*/
-/*!server-dynamic{*/
+/*!nodejs{*/
 import { DOMParser } from '@xmldom/xmldom';
 const window = { DOMParser: DOMParser };
-/*!}server-dynamic*/
+/*!}nodejs*/
 const domParser = new window.DOMParser();
 export function getNode(/*!data{*/ data = {} /*!}data*/) {
     return new JSNode(/*!data{*/ data /*!}data*/);

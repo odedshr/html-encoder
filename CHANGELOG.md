@@ -116,3 +116,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ➖ remove request-from-string dependency
 - ✨ added generic `/` as subroutine-end
 - ✨ better handling of functions and objects as data
+- ✨ added 'code' as optional output

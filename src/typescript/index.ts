@@ -6,7 +6,7 @@ import { analyze } from './transpile.analyze';
 
 const encoding = 'utf-8';
 
-export type TargetType = 'js' | 'es' | 'ts';
+export type TargetType = 'js' | 'es' | 'ts' | 'code';
 export function transpile(instructions: Instruction, type: TargetType, isSSR: boolean = false): string {
   const functions = extractFunctions(instructions, type === 'ts', isSSR);
   let parsedString = getNode(instructions, isSSR);
@@ -23,6 +23,7 @@ export function transpile(instructions: Instruction, type: TargetType, isSSR: bo
       .replace(select('any\-dynamic', revivable), '')
       .replace(select('browser\-dynamic', revivable && !isSSR), '')
       .replace(select('server\-dynamic', revivable && isSSR), '')
+      .replace(select('nodejs', (revivable && isSSR) || type === 'code'), '')
       .replace(select('data', data), '')
       .replace('/*!funcs go here*/', functions)
       .replace(select('funcs', functions.length > 0), '')

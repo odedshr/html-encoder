@@ -8,5 +8,5 @@ export declare type TargetType = 'json' | ESTypes;
 * @param boolean isServerSide - a flag indicating whether code should include additional comments that will help the file become dynamic once sent to the browser
 * @return string - instructions to recreate the HTML.
 */
-export default function htmlEncoder(html: string, type?: TargetType, isSSR?: boolean): string;
+export default function htmlEncoder(html: string, type?: TargetType, isSSR?: boolean): any;
 export { NodeParser };
