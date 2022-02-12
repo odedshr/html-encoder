@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
 import { Instruction } from '../instruction';
-import { getProcessingInstruction } from './transpile.processing-instruction';
-import { getComment, getDocument, getDocumentFragment, getTextNode, getHTMLElement } from './transpile.nodes';
+import { getNode } from './transpile.nodes';
 import { extractFunctions } from './extract-functions';
 import { analyze } from './transpile.analyze';
 
@@ -10,7 +9,7 @@ const encoding = 'utf-8';
 export type TargetType = 'js' | 'es' | 'ts';
 export function transpile(instructions: Instruction, type: TargetType, isSSR: boolean = false): string {
   const functions = extractFunctions(instructions, type === 'ts', isSSR);
-  let parsedString = toTypescript(instructions, isSSR);
+  let parsedString = getNode(instructions, isSSR);
   const { revivable, attr, css, data } = analyze(instructions);
   if (revivable) {
     parsedString += `;self._defineSet();`;
@@ -45,17 +44,6 @@ function getTemplateFile(folderName: String, type: TargetType): string {
       return `${template}.es.js`;
     default:
       return `${template}.js`;
-  }
-}
-
-function toTypescript(instruction: Instruction, isSSR: boolean = false): string {
-  switch (instruction.type) {
-    case 'document': return getDocument(instruction, isSSR);
-    case 'documentFragment': return getDocumentFragment(instruction, isSSR);
-    case 'text': return getTextNode(instruction);
-    case 'element': return getHTMLElement(instruction, isSSR);
-    case 'comment': return getComment(instruction);
-    case 'ProcessingInstruction': return getProcessingInstruction(instruction, isSSR);
   }
 }
 

@@ -114,3 +114,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.10] - 22-02-11
 
 - ➖ remove request-from-string dependency
+- ✨ added generic `/` as subroutine-end
+- ✨ better handling of functions and objects as data

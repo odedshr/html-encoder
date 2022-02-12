@@ -1,14 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHTMLElement = exports.getTextNode = exports.getComment = exports.getDocumentFragment = exports.getDocument = exports.appendNode = void 0;
+exports.getComment = exports.getDocumentFragment = exports.getDocument = exports.appendNode = exports.getNode = void 0;
 const transpile_attributes_1 = require("./transpile.attributes");
 const transpile_processing_instruction_1 = require("./transpile.processing-instruction");
-function appendNode(instruction, isSSR) {
+function getNode(instruction, isSSR = false) {
     switch (instruction.type) {
-        case 'documentFragment': return `node.appendChild(${getDocumentFragment(instruction, isSSR)});`;
-        case 'text': return `node.appendChild(${getTextNode(instruction)});`;
-        case 'element': return `node.appendChild(${getHTMLElement(instruction, isSSR)});`;
-        case 'comment': return `node.appendChild(${getComment(instruction)});`;
+        case 'document': return getDocument(instruction, isSSR);
+        case 'documentFragment': return getDocumentFragment(instruction, isSSR);
+        case 'text': return getTextNode(instruction);
+        case 'element': return getHTMLElement(instruction, isSSR);
+        case 'comment': return getComment(instruction);
+        case 'ProcessingInstruction': return (0, transpile_processing_instruction_1.getProcessingInstruction)(instruction, isSSR);
+    }
+}
+exports.getNode = getNode;
+function appendNode(instruction, isSSR = false) {
+    const node = getNode(instruction, isSSR);
+    switch (instruction.type) {
+        case 'documentFragment':
+        case 'text':
+        case 'element':
+        case 'comment': return `node.appendChild(${node});`;
         case 'ProcessingInstruction': return (0, transpile_processing_instruction_1.getProcessingInstruction)(instruction, isSSR);
     }
     return '';
@@ -42,7 +54,6 @@ exports.getComment = getComment;
 function getTextNode(instruction) {
     return `self.docElm.createTextNode(\`${instruction.value}\`)`;
 }
-exports.getTextNode = getTextNode;
 function getHTMLElement(instruction, isSSR) {
     const attributes = (instruction.attributes) ? (0, transpile_attributes_1.getAttributes)(instruction.attributes) : '';
     return `(docElm =>{
@@ -51,7 +62,6 @@ function getHTMLElement(instruction, isSSR) {
     return node;
   })(self.docElm)`;
 }
-exports.getHTMLElement = getHTMLElement;
 function appendChildren(children = [], isSSR) {
     return children.map(child => appendNode(child, isSSR)).join('\n');
 }

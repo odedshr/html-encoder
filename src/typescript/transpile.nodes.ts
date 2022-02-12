@@ -2,12 +2,24 @@ import { Instruction } from '../instruction';
 import { getAttributes } from './transpile.attributes';
 import { getProcessingInstruction } from './transpile.processing-instruction';
 
-export function appendNode(instruction: Instruction, isSSR: boolean): string {
+export function getNode(instruction: Instruction, isSSR: boolean = false): string {
   switch (instruction.type) {
-    case 'documentFragment': return `node.appendChild(${getDocumentFragment(instruction, isSSR)});`;
-    case 'text': return `node.appendChild(${getTextNode(instruction)});`;
-    case 'element': return `node.appendChild(${getHTMLElement(instruction, isSSR)});`;
-    case 'comment': return `node.appendChild(${getComment(instruction)});`;
+    case 'document': return getDocument(instruction, isSSR);
+    case 'documentFragment': return getDocumentFragment(instruction, isSSR);
+    case 'text': return getTextNode(instruction);
+    case 'element': return getHTMLElement(instruction, isSSR);
+    case 'comment': return getComment(instruction);
+    case 'ProcessingInstruction': return getProcessingInstruction(instruction, isSSR);
+  }
+}
+
+export function appendNode(instruction: Instruction, isSSR: boolean = false): string {
+  const node: string = getNode(instruction, isSSR);
+  switch (instruction.type) {
+    case 'documentFragment':
+    case 'text':
+    case 'element':
+    case 'comment': return `node.appendChild(${node});`;
     case 'ProcessingInstruction': return getProcessingInstruction(instruction, isSSR);
   }
 
@@ -38,11 +50,11 @@ export function getComment(instruction: Instruction) {
   return `self.docElm.createComment(\`${instruction.value}\`)`;
 }
 
-export function getTextNode(instruction: Instruction) {
+function getTextNode(instruction: Instruction) {
   return `self.docElm.createTextNode(\`${instruction.value}\`)`;
 }
 
-export function getHTMLElement(instruction: Instruction, isSSR: boolean) {
+function getHTMLElement(instruction: Instruction, isSSR: boolean) {
   const attributes = (instruction.attributes) ? getAttributes(instruction.attributes) : '';
 
   return `(docElm =>{

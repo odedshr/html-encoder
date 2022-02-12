@@ -140,13 +140,13 @@ export function getProcessingInstruction(instruction: Instruction, isSSR: boolea
 function getTextProcessingInstruction(instruction: Instruction) {
   if (instruction.id) {
     return `node.appendChild((()=>{
-        const node = docElm.createTextNode(self._getValue(self.data, '${instruction.value}'));
+        const node = docElm.createTextNode(self._getValue(self.data, '${instruction.value}', 'string'));
         self.register('${instruction.id}',{ node, type: 'text' });
         return node;
       })());`;
   }
 
-  return `node.appendChild(docElm.createTextNode(self._getValue(self.data, '${instruction.value}')));`;
+  return `node.appendChild(docElm.createTextNode(self._getValue(self.data, '${instruction.value}', 'string')));`;
 }
 
 function getHTMLProcessingInstruction(instruction: Instruction) {

@@ -2,14 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.transpile = void 0;
 const fs_1 = require("fs");
-const transpile_processing_instruction_1 = require("./transpile.processing-instruction");
 const transpile_nodes_1 = require("./transpile.nodes");
 const extract_functions_1 = require("./extract-functions");
 const transpile_analyze_1 = require("./transpile.analyze");
 const encoding = 'utf-8';
 function transpile(instructions, type, isSSR = false) {
     const functions = (0, extract_functions_1.extractFunctions)(instructions, type === 'ts', isSSR);
-    let parsedString = toTypescript(instructions, isSSR);
+    let parsedString = (0, transpile_nodes_1.getNode)(instructions, isSSR);
     const { revivable, attr, css, data } = (0, transpile_analyze_1.analyze)(instructions);
     if (revivable) {
         parsedString += `;self._defineSet();`;
@@ -40,16 +39,6 @@ function getTemplateFile(folderName, type) {
             return `${template}.es.js`;
         default:
             return `${template}.js`;
-    }
-}
-function toTypescript(instruction, isSSR = false) {
-    switch (instruction.type) {
-        case 'document': return (0, transpile_nodes_1.getDocument)(instruction, isSSR);
-        case 'documentFragment': return (0, transpile_nodes_1.getDocumentFragment)(instruction, isSSR);
-        case 'text': return (0, transpile_nodes_1.getTextNode)(instruction);
-        case 'element': return (0, transpile_nodes_1.getHTMLElement)(instruction, isSSR);
-        case 'comment': return (0, transpile_nodes_1.getComment)(instruction);
-        case 'ProcessingInstruction': return (0, transpile_processing_instruction_1.getProcessingInstruction)(instruction, isSSR);
     }
 }
 function treeShake(code) {

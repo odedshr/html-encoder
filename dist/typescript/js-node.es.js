@@ -69,7 +69,7 @@ export default class JSNode {
     /*!shakeable _getSubTemplate{*/
     _getSubTemplate(templateName) {
         const self = this;
-        const Template = self._getValue(this.data, templateName);
+        const Template = self._getValue(this.data, templateName, 'template');
         return new Template(this.data);
     }
     /*!}shakeable _getSubTemplate*/
@@ -92,13 +92,19 @@ export default class JSNode {
     }
     /*!}shakeable _forEach*/
     /*!shakeable _getValue{*/
-    _getValue(data, path) {
+    _getValue(data, path, expects = 'any') {
         if (path.match(/^(['"].*(\1))$/)) {
             return path.substring(1, path.length - 1);
         }
-        const value = path.replace(/^\!/, '').split('.').reduce(function (ptr, step) {
+        let value = path.replace(/^\!/, '').split('.').reduce(function (ptr, step) {
             return ptr && ptr.hasOwnProperty(step) ? ptr[step] : undefined;
         }, data);
+        if ((expects !== 'template') && value instanceof Function) {
+            value = value();
+        }
+        if ((expects === 'string') && typeof (value) === 'object') {
+            value = (value.toString && value.toString() !== '[object Object]') ? value.toString() : JSON.stringify(value);
+        }
         return path[0] === '!' ? !value : value;
     }
     /*}!shakeable _getValue*/

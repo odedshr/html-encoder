@@ -69,4 +69,13 @@ describe('html-encoder-typescript: basic operations', () => {
 	// But it can also be a simple text
 	it('supports <?==text?>', () =>
 		test('<div>Hello <span><?==name?></span></div>', { name: 'World' }, '<div>Hello <span>World</span></div>'));
+
+	it('supports functions as variables', () =>
+		test('<div>Hello <span><?=name?></span></div>', { name: () => 'World' }, '<div>Hello <span>World</span></div>'));
+
+	it('supports objects as variables', () =>
+		test('<div>Hello <span><?=name?></span></div>', { name: { first: 'foo', last: 'bar' } }, '<div>Hello <span>{"first":"foo","last":"bar"}</span></div>'));
+
+	it('supports object as variable with internal toString', () =>
+		test('<div>Hello <span><?=name?></span></div>', { name: { toString: () => 'foo bar' } }, '<div>Hello <span>foo bar</span></div>'));
 });

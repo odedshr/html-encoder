@@ -52,7 +52,7 @@ export default class JSNode {
     _forEach(iteratorName: string, indexName: string, parent: Node, fn: Function, list: any): ChildNode[][];
     /*!}shakeable _forEach*/
     /*!shakeable _getValue{*/
-    _getValue(data: KeyedObject, path: string): any;
+    _getValue(data: KeyedObject, path: string, expects?: 'template' | 'string' | 'any'): any;
     /*!shakeable _setValue{*/
     _setValue(data: KeyedObject, path: string, value: any): void;
     /*!}shakeable _setValue*/
