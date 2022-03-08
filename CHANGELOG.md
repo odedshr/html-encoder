@@ -117,3 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ added generic `/` as subroutine-end
 - ✨ better handling of functions and objects as data
 - ✨ added 'code' as optional output
+
+## [2.0.11] - 22-03-08
+
+- ✨ added support for nested functions

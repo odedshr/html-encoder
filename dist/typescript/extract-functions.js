@@ -3,18 +3,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.extractFunctions = void 0;
 const transpile_nodes_1 = require("./transpile.nodes");
 function extractFunctions(instruction, isTypescript, isSSR) {
-    if (instruction.type === 'ProcessingInstruction') {
-        switch (instruction.tag) {
-            case 'if':
-                return getIfFunction(instruction, isTypescript, isSSR);
-            case 'foreach':
-                return getForeachFunction(instruction, isTypescript, isSSR);
+    const queue = [instruction];
+    const output = [];
+    while (queue.length) {
+        //@ts-ignore
+        const current = queue.pop();
+        if (current.type === 'ProcessingInstruction') {
+            switch (current.tag) {
+                case 'if':
+                    output.push(getIfFunction(current, isTypescript, isSSR));
+                    break;
+                case 'foreach':
+                    output.push(getForeachFunction(current, isTypescript, isSSR));
+                    break;
+            }
         }
+        (current.children || []).forEach(child => queue.push(child));
     }
-    return (instruction.children || [])
-        .map(child => extractFunctions(child, isTypescript, isSSR))
-        .filter(s => s.length)
-        .join(',\n');
+    return output.filter(s => s.length).join(',\n');
 }
 exports.extractFunctions = extractFunctions;
 function getIfFunction(instruction, isTypescript, isSSR) {

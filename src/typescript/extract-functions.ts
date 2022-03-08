@@ -2,19 +2,28 @@ import { Instruction } from '../instruction';
 import { appendNode } from './transpile.nodes';
 
 export function extractFunctions(instruction: Instruction, isTypescript: boolean, isSSR: boolean): string {
-  if (instruction.type === 'ProcessingInstruction') {
-    switch (instruction.tag) {
-      case 'if':
-        return getIfFunction(instruction, isTypescript, isSSR);
-      case 'foreach':
-        return getForeachFunction(instruction, isTypescript, isSSR);
+  const queue: Instruction[] = [instruction];
+  const output: String[] = [];
+
+  while (queue.length) {
+    //@ts-ignore
+    const current: Instruction = queue.pop();
+
+    if (current.type === 'ProcessingInstruction') {
+      switch (current.tag) {
+        case 'if':
+          output.push(getIfFunction(current, isTypescript, isSSR));
+          break;
+        case 'foreach':
+          output.push(getForeachFunction(current, isTypescript, isSSR));
+          break;
+      }
     }
+
+    (current.children || []).forEach(child => queue.push(child));
   }
 
-  return (instruction.children || [])
-    .map(child => extractFunctions(child, isTypescript, isSSR))
-    .filter(s => s.length)
-    .join(',\n');
+  return output.filter(s => s.length).join(',\n');
 }
 
 function getIfFunction(instruction: Instruction, isTypescript: boolean, isSSR: boolean) {
