@@ -2,7 +2,7 @@
   "name": "html-encoder",
   "displayName": "HTML Encoder",
   "description": "Encode your HTML templates to Javascript or TypeScript instructions",
-  "version": "2.1.0",
+  "version": "2.0.11",
   "scripts": {
     "build": "npm run copy & tsc & npm run build:es",
     "copy": "cp src/typescript/js-node.ts dist/typescript/js-node.template-ts",
