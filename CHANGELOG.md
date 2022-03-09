@@ -118,6 +118,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ better handling of functions and objects as data
 - ✨ added 'code' as optional output
 
-## [2.0.11] - 22-03-08
+## [2.1.1] - 22-03-09
 
 - ✨ added support for nested functions
