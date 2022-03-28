@@ -121,3 +121,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.1] - 22-03-09
 
 - ✨ added support for nested functions
+
+## [2.1.2] - 22-03-28
+
+- 🐛 Fixed issue bug with conditions
+- 🐛 Fixed issue bug with nested conditions

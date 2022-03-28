@@ -89,4 +89,17 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 		node.set.flag1 = true;
 		assert.strictEqual(node.toString(), '<div>foobar</div>');
 	});
+
+	it('supports nested flags', () => {
+		const node = getNode('<div><??flag1#?>foo<??flag2#?>bar<?/?><?/?></div>', {
+			flag1: false,
+			flag2: true
+		});
+		assert.strictEqual(node.toString(), '<div></div>');
+		assert.strictEqual(node.set.flag1, false, 'value is set to true');
+		node.set.flag1 = true;
+		assert.strictEqual(node.toString(), '<div>foobar</div>');
+		node.set.flag2 = false;
+		assert.strictEqual(node.toString(), '<div>foo</div>');
+	});
 });

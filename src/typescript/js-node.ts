@@ -567,19 +567,23 @@ function updateConditional(property: Property, value: boolean) {
     const { fn = () => [], flag, nodes = [], startAt } = property.details;
 
     if (flag && !value) {
-      while (nodes[0].length) {
+      // was true, now false, remove elements
+      while (nodes[0] && nodes[0].length) {
         const child = nodes[0].pop();
         child && parent.removeChild(child);
       }
     } else if (!flag && value) {
+      // was false, now true, add elements
       updatedNodes = fn(value);
 
       if (parent.childNodes.length < startAt) {
+        // less children than expected, update startAt to new value
         property.details.startAt = parent.childNodes.length - updatedNodes[0].length;
       } else {
+        // out of all the siblings, move the added elements to their proper location
         const sibling = parent.childNodes.item(startAt);
-        updatedNodes[0].forEach((node) => {
-          if (indexOfChild(parent.childNodes, node) !== startAt) {
+        updatedNodes[0].forEach((node, i) => {
+          if (indexOfChild(parent.childNodes, node) !== (startAt + i)) {
             parent.insertBefore(node, sibling);
           }
         });
