@@ -13,35 +13,35 @@ export function getAttributes(attributes: { [key: string]: string | Attribute })
       );
       if (attrName === 'id') {
         // easy access to element using the id
-        instructions.push(`self.register('${value}', { node, type: 'html' });`);
+        instructions.push(`addToSet(set, '${value}', { node, type: 'html' });`);
       }
     } else {
       // dynamic 
       const { condition = false, variable, id = false } = value;
 
       if (condition) {
-        instructions.push(`if (self._getValue(self.data, '${condition}')) {`);
+        instructions.push(`if (getValue(data, '${condition}')) {`);
       }
 
       if (variable) {
         instructions.push(
-          `node.setAttribute('${attrName}', self._getValue(self.data, '${variable.replace(/[\'"]/g, "\\'")}'));`
+          `node.setAttribute('${attrName}', getValue(data, '${variable.replace(/[\'"]/g, "\\'")}'));`
         );
         if (id) {
           const pattern = id.match(/^{(.*)}$/); // checking if id is not variable to be read
-          const liveId = pattern ? `self._getValue(self.data, '${pattern[1]}')` : `'${id}'`;
-          instructions.push(`self.register(${liveId}, { node, type: 'attribute', 'attrName': '${attrName}'});`);
+          const liveId = pattern ? `getValue(data, '${pattern[1]}')` : `'${id}'`;
+          instructions.push(`addToSet(set, ${liveId}, { node, type: 'attribute', 'attrName': '${attrName}'});`);
         }
       } else {
         if (id) {
-          instructions.push(`self.register('${id}',{ node, type: 'attribute' });`);
+          instructions.push(`addToSet(set, '${id}',{ node, type: 'attribute' });`);
         }
         //no variable provided; setting attributeMap
         const addToLiveList = id
-          ? `\nself.register(\`${id}#\${k}\`, { node, type: 'attribute', 'attrName': k });`
+          ? `\addToSet(set, \`${id}#\${k}\`, { node, type: 'attribute', 'attrName': k });`
           : '';
         instructions.push(`{
-          const tmpAttrs = self._getValue(self.data, '${attrName}');
+          const tmpAttrs = getValue(data, '${attrName}');
           for (let k in tmpAttrs) {
             node.setAttribute(k, tmpAttrs[k]);${addToLiveList}
           }

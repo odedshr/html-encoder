@@ -62,7 +62,7 @@ function getSSRAttributeProcessingInstruction(instruction) {
             const id = ((attribute === null || attribute === void 0 ? void 0 : attribute.id) || '');
             const pattern = id.match(/^{(.*)}$/); // checking if id is not variable to be read
             return {
-                id: `${id}${pattern ? `=\${self._getValue(self.data, \'${pattern[1]}\')}` : ''}`,
+                id: `${id}${pattern ? `=\${getValue(data, \'${pattern[1]}\')}` : ''}`,
                 variable: attribute === null || attribute === void 0 ? void 0 : attribute.variable
             };
         })
@@ -127,18 +127,18 @@ exports.getProcessingInstruction = getProcessingInstruction;
 function getTextProcessingInstruction(instruction) {
     if (instruction.id) {
         return `node.appendChild((()=>{
-        const node = docElm.createTextNode(self._getValue(self.data, '${instruction.value}', 'string'));
-        self.register('${instruction.id}',{ node, type: 'text' });
+        const node = document.createTextNode(getValue(data, '${instruction.value}', 'string'));
+        addToSet(set, '${instruction.id}',{ node, type: 'text' });
         return node;
       })());`;
     }
-    return `node.appendChild(docElm.createTextNode(self._getValue(self.data, '${instruction.value}', 'string')));`;
+    return `node.appendChild(document.createTextNode(getValue(data, '${instruction.value}', 'string')));`;
 }
 function getHTMLProcessingInstruction(instruction) {
-    const register = (instruction.id) ? `self.register('${instruction.id}', { node, type: 'html' });\n` : '';
+    const register = (instruction.id) ? `addToSet(set, '${instruction.id}', { node, type: 'html' });\n` : '';
     const attributes = (instruction.attributes) ? (0, transpile_attributes_1.getAttributes)(instruction.attributes) : '';
     return `node.appendChild((()=>{
-          const node = this._getHTMLNode(self._getValue(self.data, '${instruction.value}'));
+          const node = getHTMLNode(getValue(data, '${instruction.value}'));
           ${attributes}${register}return node;
         })());`;
 }
@@ -163,9 +163,9 @@ function getCSSProcessingInstruction(instruction) {
     (Array.isArray(instruction.value) ? instruction.value : [instruction.value]).forEach((value) => {
         const { condition = false, variable, id = false } = (typeof (value) === 'string') ? { variable: value } : value;
         if (condition) {
-            instructions.push(`if (self._getValue(self.data, '${condition}')) {`);
+            instructions.push(`if (getValue(data, '${condition}')) {`);
         }
-        instructions.push(`tmpCss = self._getValue(self.data, '${variable}');
+        instructions.push(`tmpCss = getValue(data, '${variable}');
 				(Array.isArray(tmpCss) ? tmpCss : [tmpCss]).forEach(function (css) { target.push(css); });
 			`);
         if (condition) {
@@ -184,12 +184,12 @@ function getIfProcessingInstruction(instruction) {
     }
     const id = instruction.id;
     const liveIfString = id
-        ? `self.register('${id}', { type: 'if', node, details: { startAt, fn, fnName: '${functionName}', nodes, flag } });\n`
+        ? `addToSet(set, '${id}', { type: 'if', node, details: { startAt, fn, fnName: '${functionName}', nodes, flag } });\n`
         : '';
     return ` {
           const startAt = node.childNodes.length;
-					const fn = self.funcs.${functionName}.bind({},self, self.docElm, node);
-					const flag = !!self._getValue(self.data, '${variable}');
+					const fn = funcs.${functionName}.bind({}, node);
+					const flag = !!getValue(data, '${variable}');
 					const nodes = flag ? fn() : [];
 
 					${liveIfString}
@@ -199,12 +199,12 @@ function getForEachProcessingInstruction(instruction) {
     const { variable, functionName } = instruction.attributes || {};
     const id = instruction.id;
     const liveLoopString = id
-        ? `self.register('${id}', { type: 'foreach', node , details: { startAt, fn, fnName: '${functionName}', items, nodes } });\n`
+        ? `addToSet(set, '${id}', { type: 'foreach', node , details: { startAt, fn, fnName: '${functionName}', items, nodes } });\n`
         : '';
     return `{ 
-          const fn = self.funcs.${functionName}.bind({},self, self.docElm, node);
+          const fn = funcs.${functionName}.bind({}, node);
 					const startAt = node.childNodes.length;
-          const items = clone(self._getValue(self.data, '${variable}')) || [];
+          const items = clone(getValue(data, '${variable}')) || [];
 					const nodes = fn(items);
 					${liveLoopString}
 				}`;
@@ -213,12 +213,9 @@ function getTemplateProcessingInstruction(instruction, isSSR) {
     if (instruction.children) {
         return instruction.children.map(instruction => (0, transpile_nodes_1.appendNode)(instruction, isSSR)).join('\n');
     }
-    return `node.appendChild(self._getSubTemplate('${instruction.value}'));`;
+    return `node.appendChild(getSubTemplate(data, '${instruction.value}'));`;
 }
 function getUnknownProcessingInstruction(instruction) {
-    return `node.appendChild((docElm => {
-    const node = docElm.appendChild(docElm.createProcessingInstruction('${instruction.tag}','${instruction.value || ''}'));
-    return node;
-  })(self.docElm));`;
+    return `document.createProcessingInstruction('${instruction.tag}','${instruction.value || ''}');`;
 }
 //# sourceMappingURL=transpile.processing-instruction.js.map

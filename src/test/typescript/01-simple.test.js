@@ -33,13 +33,13 @@ describe('html-encoder-typescript: basic operations', () => {
 			'<!DOCTYPE html><html><body>Hello <b>World</b></body></html>'
 		));
 
-	// The encoder uses ProcessInstructions (PI) to properly parse dynamic files. However if it sees an unknown PI,
-	// it simply ignores it.
+	// The encoder uses ProcessInstructions(PI) to properly parse dynamic files.However if it sees an unknown PI,
+	// 	it simply ignores it.
 	it('ignores unknown PI', () => test('<?unknown?>', {}, '<?unknown ?>', ''));
 
 	it('converts comments', () => test('<!-- a comment -->', {}, '<!-- a comment -->'));
 
-	// The encoder handles simple text inputs and inject their value from the provided data at run-time.
+	// The encoder handles simple text inputs and inject their value from the provided data at run - time.
 	it('supports <?=text?>', () => test('<div>Hello <?=name?></div>', { name: 'World' }, '<div>Hello World</div>'));
 
 	// textNodes are HTML-safe (meaning it won't display malicious code injected to your site)

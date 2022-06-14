@@ -28,7 +28,7 @@ export function extractFunctions(instruction: Instruction, isTypescript: boolean
 
 function getIfFunction(instruction: Instruction, isTypescript: boolean, isSSR: boolean) {
   const functionName = instruction.attributes?.functionName;
-  const ifArgs = isTypescript ? 'self:JSNode, docElm:Document, node:Node' : 'self, docElm, node';
+  const ifArgs = isTypescript ? 'node:Node' : 'node';
   return `${functionName} (${ifArgs}) {
           const fn = function () { ${instruction.children?.map(child => appendNode(child, isSSR)).join('\n') || ''} };
 	        return getAddedChildren(node, fn);
@@ -36,15 +36,15 @@ function getIfFunction(instruction: Instruction, isTypescript: boolean, isSSR: b
 }
 
 function getServerSideComment(functionName: string, iterator: string, index: string) {
-  const indexString = `\${self._getValue(self.data, '${index}')}`;
-  const iteratorString = `\${self._getValue(self.data, '${iterator}')}`;
-  return `node.appendChild(docElm.createComment(\`PI:forEachItem ${functionName} ${indexString} ${iteratorString}\`));`;
+  const indexString = `\${getValue(data, '${index}')}`;
+  const iteratorString = `\${getValue(data, '${iterator}')}`;
+  return `node.appendChild(document.createComment(\`PI:forEachItem ${functionName} ${indexString} ${iteratorString}\`));`;
 }
 
 function getForeachFunction(instruction: Instruction, isTypescript: boolean, isSSR: boolean = false) {
   const { iterator, index, functionName } = instruction.attributes as { [key: string]: string } || {};
 
-  const loopArgs = isTypescript ? 'self:JSNode, docElm:Document, node:Node, items:any' : 'self, docElm, node, items';
+  const loopArgs = isTypescript ? 'node:Node, items:any' : 'node, items';
 
   return `${functionName} (${loopArgs}) {
           const fn = function() {
@@ -52,6 +52,6 @@ function getForeachFunction(instruction: Instruction, isTypescript: boolean, isS
             ${instruction.children?.map(child => appendNode(child, isSSR)).join('\n') || ''}
           };
 
-          return self._forEach('${iterator}', '${index}', node, fn, items);
+          return iterate(data, '${iterator}', '${index}', node, fn, items);
         }`;
 }

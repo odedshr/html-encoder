@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import NodeParser from './html-to-json';
 import { transpile as toESCode, TargetType as ESTypes } from './typescript/index';
 
@@ -17,13 +18,35 @@ export default function htmlEncoder(html: string, type: TargetType = 'js', isSSR
     return parser.toString();
   }
 
-  const stringifiedCode = toESCode(parser.getJSON(), type, isSSR);
+  const stringifiedCode = fixLibraryImport(toESCode(parser.getJSON(), type, isSSR), type === 'es' || type === 'es-code');
 
-  return (type === 'code') ? toCode(stringifiedCode) : stringifiedCode;
+  if (type !== 'code' && type !== 'es-code') {
+    return stringifiedCode;
+  }
+
+  return toCode(stringifiedCode);
+}
+
+function fixLibraryImport(code: string, isModule = false) {
+  if (isModule) {
+    return code.replace('./js-node.lib.js', `https://unpkg.com/html-encoder@${getVersion()}/dist/typescript/js-node.lib.js`);
+  }
+
+  return code.replace('./js-node.lib.js', './typescript/js-node.lib.js');
+}
+
+function getVersion() {
+  return JSON.parse(readFileSync(`${__dirname}/../package.json`, 'utf-8')).version || 'latest';
 }
 
 function toCode(stringifiedCode: string) {
-  return new Function('require', `const exports ={}; ${stringifiedCode}; return exports;`)(require);
+  try {
+    return new Function('require', `const exports ={}; ${stringifiedCode}; return exports;`)(require);
+  }
+  catch (err) {
+    console.log('Error codifying string', err);
+  }
+  return null;
 }
 
 export { NodeParser };

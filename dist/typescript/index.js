@@ -11,18 +11,12 @@ function transpile(instructions, type, isSSR = false) {
     let parsedString = (0, transpile_nodes_1.getNode)(instructions, isSSR);
     const { revivable, attr, css, data } = (0, transpile_analyze_1.analyze)(instructions);
     if (revivable) {
-        parsedString += `;self._defineSet();`;
+        parsedString += `;attachSetToNode(set, node);`;
     }
     return treeShake((0, fs_1.readFileSync)(getTemplateFile(__dirname, type), { encoding })
-        .replace(select('revive', revivable), '')
-        .replace(select('NodeType', revivable || attr || css), '')
-        .replace('/*! main-code-goes-here */', `((node) => { self.node = ${parsedString}; })(self.docElm);`)
-        .replace(select('any\-dynamic', revivable), '')
-        .replace(select('browser\-dynamic', revivable && !isSSR), '')
-        .replace(select('server\-dynamic', revivable && isSSR), '')
-        .replace(select('nodejs', (revivable && isSSR) || type === 'code'), '')
-        .replace(select('data', data), '')
+        .replace('const node = document.createTextNode(\'main-code-goes-here\');', `const node = ${parsedString};`)
         .replace('/*!funcs go here*/', functions)
+        .replace(select('data', data), '')
         .replace(select('funcs', functions.length > 0), '')
         .replace('//# sourceMappingURL=js-node.js.map', '')
         .replace(/(\r?\n){2,}/gm, '\n'));
@@ -37,25 +31,24 @@ function getTemplateFile(folderName, type) {
         case 'ts':
             return `${template}.template-ts`;
         case 'es':
+        case 'es-code':
             return `${template}.es.js`;
         default:
             return `${template}.js`;
     }
 }
 function treeShake(code) {
-    return findFeatures(code)
-        .reduce((code, feature) => code.replace(select(`shakeable ${feature}`, isFeatureUsed(code, feature)), ''), code);
-}
-function isFeatureUsed(code, feature) {
-    return (code.match(new RegExp(`${feature} = function|${feature}\\(|${feature}.bind`, 'gm')) || []).length > 1;
-}
-function findFeatures(code) {
-    const featureFinder = /\/\*!shakeable (\w*){\*\/\n/g;
-    const features = [];
-    let match;
-    while ((match = featureFinder.exec(code)) !== null) {
-        features.push(match[1]);
+    var _a;
+    const matches = /\/\*\!shakeable \{\*\/((.)*?)\/\*\!\} shakeable\*\//mg.exec(code);
+    if (matches === null) {
+        return code;
     }
-    return features;
+    const allFeatures = (_a = matches[1]) !== null && _a !== void 0 ? _a : '';
+    const usedFeatures = allFeatures
+        .replace(/\s/g, '')
+        .split(',')
+        .filter(feature => { var _a; return ((_a = code.match(new RegExp(feature, 'g'))) !== null && _a !== void 0 ? _a : []).length > 1; })
+        .join(', ');
+    return code.replace(matches[0], usedFeatures);
 }
 //# sourceMappingURL=index.js.map

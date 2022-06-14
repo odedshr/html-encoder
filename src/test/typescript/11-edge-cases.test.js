@@ -12,7 +12,6 @@ describe('html-encoder-typescript: edge-cases', () => {
 	it('handles html-tags with illegal html chars', () =>
 		test('<div><?==text?></div>', { text: '<b>a</b> & <i>b</i>' }, '<div><span><b>a</b> &amp; <i>b</i></span></div>'));
 
-	//
 	it('using the same #liveId for multiple targets', () => {
 		const node = getNode(
 			'<ul><li><input id="field"/><?attr value#liveId=text?></li><li><?==text #liveId?></li><li><?=text #liveId?></li></ul>',
@@ -34,7 +33,7 @@ describe('html-encoder-typescript: edge-cases', () => {
 	it('handles typescript loops', () => {
 		const nodeString = getTSString('<ul><?v@items?><li><?=v?></li><?/?></ul>');
 
-		assert.ok(nodeString.indexOf('forEachItemsvI0 (self:JSNode, docElm:Document, node:Node, items:any)') > -1);
+		assert.ok(nodeString.indexOf('forEachItemsvI0 (node:Node, items:any)') > -1);
 	});
 
 	it('handles es files', () => {

@@ -11,33 +11,33 @@ describe('html-encoder-typescript: transpile.process-instruction', () => {
   it('handles document node instruction', () => assert.strictEqual(getDocument({
     attributes: { name: 'foo', publicId: 'bar', systemId: 'lulu' }
   }),
-    '(docElm => {\n' +
-    '    const node = docElm;\n' +
-    "    docElm.insertBefore(docElm.implementation.createDocumentType('foo', 'bar', 'lulu'), docElm.childNodes[0]);\n" +
-    '    docElm.removeChild(docElm.childNodes[1]);\n' +
+    '(() => {\n' +
+    "    document.insertBefore(document.implementation.createDocumentType('foo', 'bar', 'lulu'), document.childNodes[0]);\n" +
+    '    document.removeChild(document.childNodes[1]);\n' +
+    '    const node = document;\n' +
     '    \n' +
-    '    return docElm;\n' +
-    '  })(self.docElm)'
+    '    return document;\n' +
+    '  })()'
   ));
 
   it('handles text node instruction', () => assert.strictEqual(appendNode({
     type: 'text'
   }),
-    'node.appendChild(self.docElm.createTextNode(`undefined`));'
+    'node.appendChild(document.createTextNode(`undefined`));'
   ));
 
   it('handles documentFragment node instruction', () => assert.strictEqual(appendNode({
     type: 'documentFragment'
   }),
-    'node.appendChild((docElm => {\n' +
-    '    const node = docElm.createDocumentFragment();\n' +
-    '    return node;\n' +
-    '  })(self.docElm));'
+    `node.appendChild((() => {
+    const node = document.createDocumentFragment();
+    return node;
+  })());`
   ));
 
   it('handles text node instruction', () => assert.strictEqual(appendNode({
     type: 'comment'
   }),
-    'node.appendChild(self.docElm.createComment(`undefined`));'
+    'node.appendChild(document.createComment(`undefined`));'
   ));
 });

@@ -26,28 +26,28 @@ exports.extractFunctions = extractFunctions;
 function getIfFunction(instruction, isTypescript, isSSR) {
     var _a, _b;
     const functionName = (_a = instruction.attributes) === null || _a === void 0 ? void 0 : _a.functionName;
-    const ifArgs = isTypescript ? 'self:JSNode, docElm:Document, node:Node' : 'self, docElm, node';
+    const ifArgs = isTypescript ? 'node:Node' : 'node';
     return `${functionName} (${ifArgs}) {
           const fn = function () { ${((_b = instruction.children) === null || _b === void 0 ? void 0 : _b.map(child => (0, transpile_nodes_1.appendNode)(child, isSSR)).join('\n')) || ''} };
 	        return getAddedChildren(node, fn);
         }`;
 }
 function getServerSideComment(functionName, iterator, index) {
-    const indexString = `\${self._getValue(self.data, '${index}')}`;
-    const iteratorString = `\${self._getValue(self.data, '${iterator}')}`;
-    return `node.appendChild(docElm.createComment(\`PI:forEachItem ${functionName} ${indexString} ${iteratorString}\`));`;
+    const indexString = `\${getValue(data, '${index}')}`;
+    const iteratorString = `\${getValue(data, '${iterator}')}`;
+    return `node.appendChild(document.createComment(\`PI:forEachItem ${functionName} ${indexString} ${iteratorString}\`));`;
 }
 function getForeachFunction(instruction, isTypescript, isSSR = false) {
     var _a;
     const { iterator, index, functionName } = instruction.attributes || {};
-    const loopArgs = isTypescript ? 'self:JSNode, docElm:Document, node:Node, items:any' : 'self, docElm, node, items';
+    const loopArgs = isTypescript ? 'node:Node, items:any' : 'node, items';
     return `${functionName} (${loopArgs}) {
           const fn = function() {
             ${isSSR ? getServerSideComment(functionName, iterator, index) : ''}
             ${((_a = instruction.children) === null || _a === void 0 ? void 0 : _a.map(child => (0, transpile_nodes_1.appendNode)(child, isSSR)).join('\n')) || ''}
           };
 
-          return self._forEach('${iterator}', '${index}', node, fn, items);
+          return iterate(data, '${iterator}', '${index}', node, fn, items);
         }`;
 }
 //# sourceMappingURL=extract-functions.js.map

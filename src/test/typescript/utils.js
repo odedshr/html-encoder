@@ -5,9 +5,11 @@ const htmlEncoder = require('../../../dist/html-encoder').default;
 
 // test() created a JS-based SSR-compatible node and compares it to the expected string
 function test(originalString, data = {}, expectedString, description, testFileName = undefined) {
-  const encodedNode = htmlEncoder(originalString, 'code', false);
+  const encodedNode = htmlEncoder(originalString, 'code');
   try {
-    testFileName && writeFileSync(`${testFileName}.log.js`, encodedNode.toString());
+    if (testFileName !== undefined) {
+      writeFileSync(`${testFileName}.log.js`, encodedNode.toString());
+    }
 
     assert.strictEqual(encodedNode.getNode(data).toString(), expectedString, description);
   } catch (err) {
@@ -19,7 +21,7 @@ function test(originalString, data = {}, expectedString, description, testFileNa
 function getNodeFactory(htmlString, testFileName = undefined) {
   const encoded = htmlEncoder(htmlString, 'code');
 
-  testFileName && writeFileSync(`${testFileName}.log.js`, encoded.toString());
+  testFileName && writeFileSync(`${testFileName}.log.js`, htmlEncoder(htmlString, 'js').toString());
 
   return encoded.getNode;
 }
@@ -44,7 +46,7 @@ function getSsrHtml(htmlString, data, testFileName = undefined) {
 // getSSRNode() creates a JS-based SSR-compatible node but then use it as a base for browser-compatible node to return
 function getSSRNode(htmlString, data, testFileName = undefined) {
   const ssrEncodedNode = getSsrHtml(htmlString, data, testFileName);
-  const browserEncoded = htmlEncoder(htmlString, 'code', false);
+  const browserEncoded = htmlEncoder(htmlString, 'code', false); //TODO: change this test to es-code
 
   testFileName && writeFileSync(`${testFileName}.browser.js`, browserEncoded.toString());
 

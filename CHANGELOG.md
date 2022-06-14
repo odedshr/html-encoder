@@ -126,3 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 🐛 Fixed issue bug with conditions
 - 🐛 Fixed issue bug with nested conditions
+
+## [3.0.0] - 22-06-20
+
+- 💥 using imported lib file to reduce the content redundancy
+- ✨ added 'es-code' output option

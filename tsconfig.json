@@ -17,12 +17,14 @@
   },
   "files": [
     "src/html-encoder.ts",
-    "src/typescript/js-node.ts"
+    "src/typescript/js-node.ts",
+    "src/typescript/js-node.lib.ts"
   ],
   "exclude": [
     "node_modules",
     ".vscode-test",
     "dist",
-    "src/js-node.es.ts"
+    "src/js-node.es.ts",
+    "src/js-node.lib.es.ts"
   ]
 }

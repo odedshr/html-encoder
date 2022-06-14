@@ -4,11 +4,13 @@
   "description": "Encode your HTML templates to Javascript or TypeScript instructions",
   "version": "2.1.2",
   "scripts": {
-    "build": "npm run copy & tsc & npm run build:es",
+    "build": "npm run copy && npm run build:es && tsc -p ./tsconfig.json",
     "copy": "cp src/typescript/js-node.ts dist/typescript/js-node.template-ts",
-    "build:es": "cp src/typescript/js-node.ts src/typescript/js-node.es.ts && tsc -p ./tsconfig.es.json && rm src/typescript/js-node.es.ts",
+    "build:es": "npm run cp:jsnode:es && npm run cp:jsnodelib:es && tsc -p ./tsconfig.es.json && rm src/typescript/js-node*.es.ts",
+    "cp:jsnode:es": "cp src/typescript/js-node.ts src/typescript/js-node.es.ts",
+    "cp:jsnodelib:es": "cp src/typescript/js-node.lib.ts src/typescript/js-node.lib.es.ts",
     "pretest": "npm run build",
-    "test": "mocha src/test/**/*.test.js",
+    "test": "mocha src/test/typescript/*.test.js",
     "test:coverage": "nyc mocha src/test/**/*.test.js"
   },
   "icon": "images/icon.png",

@@ -102,4 +102,20 @@ describe('html-encoder-typescript: real-time-sub-routines', () => {
 		node.set.flag2 = false;
 		assert.strictEqual(node.toString(), '<div>foo</div>');
 	});
+
+	it('supports attribute inside conditional', () => {
+		const node = getNode('<div><??flag1#?>foo<?attr data-value#=value?><?/?></div>', {
+			flag1: false,
+			value: 'bar'
+		});
+		assert.strictEqual(node.toString(), '<div></div>');
+		assert.strictEqual(node.set.flag1, false, 'value is set to true');
+		node.set.flag1 = true;
+		assert.strictEqual(node.toString(), '<div data-value="bar">foo</div>');
+		node.set['data-value'] = 'bar2';
+		assert.strictEqual(node.toString(), '<div data-value="bar2">foo</div>');
+		// note that when removeing the flag, the added attribute will remain!!
+		node.set.flag1 = false;
+		assert.strictEqual(node.toString(), '<div data-value="bar2"></div>');
+	});
 });
